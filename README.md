@@ -9,7 +9,7 @@ cd data-snapshot-annotation
 docker compose up
 ```
 
-Then enter `localhost:8000` on a web browser to start annotating!
+Then enter `http://localhost:8080/` on a web browser to start annotating!
 
 # Troubleshooting
 
