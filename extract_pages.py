@@ -5,7 +5,7 @@ from tqdm.auto import tqdm
 
 
 def main(input_dir, output_dir):
-    files = Path(input_dir).rglob("*.pdf")
+    files = list(Path(input_dir).rglob("*.pdf"))
     for f in tqdm(files):
         images = convert_from_path(pdf_path=f, dpi=300)
 
