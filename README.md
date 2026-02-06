@@ -30,7 +30,7 @@ Label Studio for data-snapshot
 6. Click `Save`.
 
 # Adding data to annotate
-1. Create a folder in the `labelstudio_data` folder (e.g., `project1_data`) and put the files to annotate there.
+1. Create a folder in the `labelstudio_data` folder (e.g., `project1_data`) and put the files to annotate there. (See [Converting PDF files to images](#converting-pdf-files-to-images) section for handling PDF files.)
 2. Go to the project's settings.
 3. Select `Cloud Storage` > `Add Source Storage` > `Local Files` > `Next`.
 4. Add a Storage Title.
@@ -41,6 +41,17 @@ Label Studio for data-snapshot
 9. Click `Next` > `Save & Sync`.
 
 The files should show up in the project tab. New files will appear as new tasks or by manually syncing in the Cloud Storage settings.
+
+# Converting PDF files to images
+
+1. Install `requirements.txt` and Poppler.
+    ```shell
+    pip install -r requirements.txt
+    sudo apt-get install poppler-utils
+    ```
+2. Add PDF files to the `pdf_input` directory.
+3. Run `python extract_pages.py`.
+4. Pages will be saves PNG files in the `pages_output` directory.
 
 # Troubleshooting
 
