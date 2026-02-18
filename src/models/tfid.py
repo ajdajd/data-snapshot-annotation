@@ -57,6 +57,20 @@ class ExtractSnapshot:
         return annotations
 
 
+def normalize_annotation(annotation, width, height):
+    bboxes = annotation["bboxes"]
+
+    normalized_bboxes = []
+    for bbox in bboxes:
+        x1, y1, x2, y2 = bbox
+        normalized_bboxes.append([x1 / width, y1 / height, x2 / width, y2 / height])
+
+    normalized_annotation = {k: v for k, v in annotation.items()}
+    normalized_annotation["bboxes"] = normalized_bboxes
+
+    return normalized_annotation
+
+
 def save_annotation(annotation, file_name, page, output_dir=MODEL_OUTPUT_DIR):
     output_dir = output_dir / file_name
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -76,7 +90,8 @@ def main():
         images = convert_from_path(pdf, dpi=300)
 
         for page, image in enumerate(tqdm(images, desc="Processing pages"), start=1):
-            annotation = extractor.tf_id_detection(image)
+            annotation = extractor.tf_id_detection(image)[0]
+            annotation = normalize_annotation(annotation, image.width, image.height)
             save_annotation(annotation, pdf.name, page)
 
 
