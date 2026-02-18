@@ -6,14 +6,12 @@ from PIL.Image import Image
 from tqdm.auto import tqdm
 from transformers import AutoModelForCausalLM, AutoProcessor
 
-from src.constants import ROOT
+from src.constants import MODEL_OUTPUT_DIR, PDF_INPUT_DIR
 
 
 MODEL_NAME = "tfid"
 MODEL_ID = "yifeihu/TF-ID-large"
 DEVICE = "cpu"
-PDF_INPUT_DIR = ROOT / "pdf_input_sample"
-OUTPUT_DIR = ROOT / "model_outputs"
 
 
 class ExtractSnapshot:
@@ -59,7 +57,7 @@ class ExtractSnapshot:
         return annotations
 
 
-def save_annotation(annotation, file_name, page, output_dir=OUTPUT_DIR):
+def save_annotation(annotation, file_name, page, output_dir=MODEL_OUTPUT_DIR):
     output_dir = output_dir / file_name
     output_dir.mkdir(parents=True, exist_ok=True)
 
