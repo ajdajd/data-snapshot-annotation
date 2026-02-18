@@ -92,3 +92,4 @@ target/
 labelstudio_data/
 pg_data/
 pdf_input/
+model_output/
