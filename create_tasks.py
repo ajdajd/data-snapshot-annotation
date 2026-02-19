@@ -4,7 +4,6 @@ from pathlib import Path
 from pdf2image import convert_from_path
 from tqdm.auto import tqdm
 
-
 BASE_HOST_PATH = "/data/local-files/?d="
 LABEL_STUDIO_LOCAL_FILES_DOCUMENT_ROOT = "labelstudio_data/"
 
@@ -29,9 +28,14 @@ def main(input_dir, dataset_name):
             page = f"{BASE_HOST_PATH}{dataset_name}/{fname}"
             image_list.append(page)
 
-        task_json.append({"data": {"pages": image_list}})
+        task_json.append(
+            {
+                "data": {"pages": image_list},
+                "meta": {"file": f.name},
+            }
+        )
 
-    with open(output_dir / "tasks.json", 'w') as f:
+    with open(output_dir / "tasks.json", "w") as f:
         json.dump(task_json, f)
 
 
