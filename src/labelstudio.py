@@ -6,6 +6,7 @@ from typing import Any, Dict, List, Optional, Tuple
 # TODO: Move to constants.py
 INPUT_JSON_PATH = ROOT / "data/raw_input/project-19-at-2026-02-19-14-26-9aaf565b.json"
 OUTPUT_JSON_PATH = ROOT / "data/evaluation_input/ground_truth.json"
+PDF_INPUT_DIR = "pdf_input/"
 
 
 def _clamp01(x: float) -> float:
@@ -91,11 +92,14 @@ def convert_labelstudio_export_to_eval_v13(
 
     for task in tasks:
         meta = task.get("meta") or {}
-        doc_name = meta.get("file") or f"task_{task.get('id', 'unknown')}"
+        doc_name = meta.get("file")
         doc_id = str(doc_name)
+        doc_path = PDF_INPUT_DIR + doc_name
 
         if doc_id not in seen_docs:
-            documents.append({"doc_id": doc_id, "doc_name": doc_name})
+            documents.append(
+                {"doc_id": doc_id, "doc_name": doc_name, "doc_path": doc_path}
+            )
             seen_docs.add(doc_id)
 
         data = task.get("data") or {}
