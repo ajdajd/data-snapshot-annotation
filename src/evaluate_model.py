@@ -323,6 +323,8 @@ def evaluate(
 
                 matches, unmatched_p, unmatched_g = greedy_match(gt_lab, pred_lab, thr)
 
+                # TODO: Implement snapshot saving of tp, fp, fn
+
                 st = per_class[lab]
                 for pi, gi, _v in matches:
                     pred_box = pred_lab[pi].bbox
