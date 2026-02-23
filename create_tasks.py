@@ -19,9 +19,9 @@ def main(input_dir, dataset_name):
         images = convert_from_path(pdf_path=f, dpi=300)
 
         image_list = []
-        for idx, image in enumerate(images, start=1):
+        for idx, image in enumerate(images):
             # Save png file
-            fname = f"{f.name}_page_{idx:03d}.png"
+            fname = f"{f.name}_p{idx:03d}.png"
             image.save(Path(output_dir) / fname, "PNG")
 
             # Compile to task json
