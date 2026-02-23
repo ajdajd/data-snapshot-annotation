@@ -9,8 +9,8 @@ def main(input_dir, output_dir):
     for f in tqdm(files):
         images = convert_from_path(pdf_path=f, dpi=300)
 
-        for idx, image in enumerate(images, start=1):
-            output_path = Path(output_dir) / f"{f.name}_page_{idx:03d}.png"
+        for idx, image in enumerate(images):
+            output_path = Path(output_dir) / f"{f.name}_p{idx:03d}.png"
             image.save(output_path, "PNG")
 
 
