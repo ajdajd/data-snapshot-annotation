@@ -4,7 +4,9 @@ from src.constants import ROOT
 from typing import Any, Dict, List, Optional, Tuple
 
 # TODO: Move to constants.py
-INPUT_JSON_PATH = ROOT / "data/raw_input/project-19-at-2026-02-19-14-26-9aaf565b.json"
+INPUT_JSON_PATH = (
+    ROOT / "data/raw_input/project-19-at-2026-02-19-14-26-9aaf565b.json"
+)  # Rename to LS_EXPORT_JSON_PATH
 OUTPUT_JSON_PATH = ROOT / "data/evaluation_input/ground_truth.json"
 PDF_INPUT_DIR = "pdf_input/"
 
