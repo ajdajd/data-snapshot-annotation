@@ -1,0 +1,6 @@
+# TODO: Consolidate to a pyproject.toml
+-e . 
+pdf2image==1.17.0
+transformers==4.46.0
+torch==2.9.1
+tqdm==4.67.1
