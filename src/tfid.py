@@ -7,9 +7,7 @@ TF-ID Large adapter -> Unified Evaluation Schema v1.3
 
 from __future__ import annotations
 
-import hashlib
 import json
-import os
 import uuid
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -74,7 +72,6 @@ class ExtractSnapshot:
                 task="<OD>",
                 image_size=(images[i].width, images[i].height),
             )
-            # TF-ID returns a dict keyed by "<OD>"
             annotations.append(annotation["<OD>"])
 
         return annotations
@@ -89,7 +86,7 @@ LABEL_MAP: Dict[str, str] = {
     "2": "Table",
 }
 
-# Common variants we’ve seen in model outputs
+# TODO: Move to utils.py
 _LABEL_NORMALIZATION = {
     "figure": "Figure",
     "fig": "Figure",
@@ -103,6 +100,7 @@ _LABEL_NORMALIZATION = {
 _ALLOWED_LABELS = set(LABEL_MAP.values())
 
 
+# TODO: Move to utils.py
 def _utc_now_iso() -> str:
     # ISO8601 with Z
     return (
@@ -113,6 +111,7 @@ def _utc_now_iso() -> str:
     )
 
 
+# TODO: Move to utils.py
 def _coerce_label(label: Any) -> Optional[str]:
     """
     Returns canonical label ("Figure"/"Table") or None if unrecognized.
@@ -144,6 +143,7 @@ def _coerce_label(label: Any) -> Optional[str]:
     return None
 
 
+# TODO: Move to utils.py
 def _clip01(x: float) -> float:
     return 0.0 if x < 0.0 else 1.0 if x > 1.0 else x
 

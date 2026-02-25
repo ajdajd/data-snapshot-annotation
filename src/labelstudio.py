@@ -9,6 +9,7 @@ OUTPUT_JSON_PATH = ROOT / "data/evaluation_input/ground_truth.json"
 PDF_INPUT_DIR = "pdf_input/"
 
 
+# TODO: Move to utils.py
 def _clamp01(x: float) -> float:
     return 0.0 if x < 0.0 else 1.0 if x > 1.0 else x
 
@@ -83,6 +84,7 @@ def convert_labelstudio_export_to_eval_v13(
 
     # Keep canonical label_map unless caller overrides it.
     # We still include it top-level because v1.3 expects it, even if export contains extra labels.
+    # TODO: Move to cosntants.py
     if label_map is None:
         label_map = {"1": "Figure", "2": "Table"}
 
@@ -213,4 +215,5 @@ def main():
 
 
 if __name__ == "__main__":
+    # TODO: Add ArgumentParser
     main()

@@ -31,10 +31,12 @@ def load_json(path: str | Path) -> dict:
 # -----------------------------
 
 
+# TODO: Move to utils.py
 def _clamp01(x: float) -> float:
     return 0.0 if x < 0.0 else 1.0 if x > 1.0 else x
 
 
+# TODO: Move to utils.py
 def bbox_sanitize(b: List[float]) -> Tuple[float, float, float, float]:
     if not (isinstance(b, list) and len(b) == 4):
         raise ValueError(f"Invalid bbox: {b}")
@@ -101,6 +103,7 @@ class DetObj:
     score: Optional[float] = None
 
 
+# TODO: Deprecate this; pred files MUST follow page_id naming convention
 def index_pages(predictions: List[dict]) -> Dict[Tuple[str, int], List[dict]]:
     """
     Index by (doc_id, page_index). We don't rely on page_id so minor format drift won't break eval.
