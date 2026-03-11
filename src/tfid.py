@@ -380,6 +380,8 @@ if __name__ == "__main__":
     parser.add_argument("--model_id", type=str, default=MODEL_ID_DEFAULT)
     args = parser.parse_args()
 
+    # TODO: Print input_pdf_dir and how many files
+
     cfg = TFIDAdapterConfig(
         model_id=args.model_id,
         device=args.device,

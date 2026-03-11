@@ -69,4 +69,4 @@ Go to the project tab. Each row (called a "task") should correspond to a PDF fil
     2. Run `python src/labelstudio.py`. Make sure to point `INPUT_JSON_PATH` to the file generated from the previous step.
 2. Generate prediction file(s).
     1. Run `python src/tfid.py` to generate `tfid-large.json`.
-3. Run `python src/evaluate_model --gt_json_path=path/to/ground_truth.json --pred_json_path=path/to/pred.json`
+3. Run `python src/evaluate_model.py --gt_json_path=path/to/ground_truth.json --pred_json_path=path/to/pred.json`

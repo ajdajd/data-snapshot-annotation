@@ -412,3 +412,6 @@ if __name__ == "__main__":
         output_path=args.output_report_path,
     )
     print(json.dumps(rep, indent=4, ensure_ascii=False))
+    # TODO: Don't print the entire dump. Just print the file path of report.json.
+
+    # TODO: Implement bbox visualizations for human checking of FP and FN. Maybe a different module that takes in 2 json paths.
