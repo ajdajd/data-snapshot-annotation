@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools >= 77.0.3"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "data-snap-shot-annotation"
+version = "0.1.0"
+description = "Label Studio for data-snapshot"
+requires-python = "=3.10.19"
+
+dependencies = [
+    "pdf2image==1.17.0",
+    "tqdm==4.67.1",
+]
+
+
+[project.optional-dependencies]
+evaluation = [
+    "transformers==4.46.0",
+    "torch==2.9.1",
+]

@@ -11,9 +11,9 @@ from src.constants import ROOT
 
 # TODO: Move to constants.py
 GT_JSON_PATH = ROOT / "data/evaluation_input/ground_truth.json"
-PRED_JSON_PATH = ROOT / "data/evaluation_input/tfid-large.json"
+PRED_JSON_PATH = ROOT / "data/evaluation_input/chatgpt3.json"
 # TODO: Reference gt and pred file in report filename
-OUTPUT_REPORT_PATH = ROOT / "data/evaluation_output/report.json"
+OUTPUT_REPORT_PATH = ROOT / "data/evaluation_output/report_chatgpt3.json"
 
 
 # -----------------------------

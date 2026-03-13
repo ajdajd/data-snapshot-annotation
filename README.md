@@ -33,9 +33,9 @@ Label Studio for data-snapshot
 
 ## 1. Pre-requisites
 
-1. Install `requirements.txt`.
+1. Install requirements.
     ```shell
-    pip install -r requirements.txt
+    pip install .
     ```
 2. Install Poppler.
     ```shell
@@ -78,6 +78,10 @@ Label Studio for data-snapshot
 
 # Evaluating models (WIP)
 
+1. Install additional dependencies.
+    ```shell
+    pip install -e .["evaluation"]
+    ```
 1. Generate ground truth labels `ground_truth.json`.
     1. Export annotations from Label Studio. Use the JSON format.
     2. Run `python src/labelstudio.py`. Make sure to point `INPUT_JSON_PATH` to the file generated from the previous step.
