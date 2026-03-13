@@ -6,16 +6,10 @@ Label Studio for data-snapshot
 1. Clone the repository.
     ```shell
     git clone git@github.com:ajdajd/data-snapshot-annotation.git
-    cd data-snapshot-annotation
     ```
-    Alternatively, you may just download the `docker-compose.yml` to a directory for minimal setup.
+2. Go inside the repo and start the service.
     ```shell
-    mkdir data-snapshot-annotation
     cd data-snapshot-annotation
-    # Save a copy of docker-compose.yml here.
-    ```
-2. Start the service.
-    ```shell
     docker compose up
     ```
 3. If you encounter permission issues, run
@@ -33,7 +27,7 @@ Label Studio for data-snapshot
 
 ## 1. Pre-requisites
 
-1. Install requirements.
+1. Install dependencies.
     ```shell
     pip install .
     ```
@@ -67,15 +61,6 @@ Label Studio for data-snapshot
     13. Click `Next` > `Save`. (Important: Do NOT click `Save & Sync`.)
 3. Go to the project tab. Each row (called a "task") should correspond to a PDF file to annotate.
 
-# Troubleshooting
-
-- `PermissionError: [Errno 13] Permission denied: '/label-studio/data/media'`
-  - Solution: Give writeable permission to the project directory.
-    ```shell
-    # Note: Make your cwd is the project directory!
-    sudo chmod -R 777 .
-    ```
-
 # Evaluating models (WIP)
 
 1. Install additional dependencies.
@@ -88,3 +73,12 @@ Label Studio for data-snapshot
 2. Generate prediction file(s).
     1. Run `python src/tfid.py` to generate `tfid-large.json`.
 3. Run `python src/evaluate_model.py --gt_json_path=path/to/ground_truth.json --pred_json_path=path/to/pred.json`
+
+# Troubleshooting
+
+- `PermissionError: [Errno 13] Permission denied: '/label-studio/data/media'` when setting up Label Studio
+  - Solution: Give writeable permission to the project directory.
+    ```shell
+    # Note: Make your cwd is the project directory!
+    sudo chmod -R 777 .
+    ```
