@@ -8,6 +8,7 @@ name = "data-snapshot-annotation"
 version = "0.1.0"
 description = "Label Studio for data-snapshot"
 requires-python = "==3.10.19"
+readme = "README.md"
 
 dependencies = [
     "pdf2image==1.17.0",
