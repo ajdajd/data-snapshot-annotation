@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from src.constants import ROOT
+from dsa.constants import ROOT
 from typing import Any, Dict, List, Optional, Tuple
 
 # TODO: Move to constants.py

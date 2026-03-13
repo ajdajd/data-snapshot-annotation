@@ -19,7 +19,7 @@ from PIL.Image import Image
 from tqdm.auto import tqdm
 from transformers import AutoModelForCausalLM, AutoProcessor
 
-from src.constants import ROOT
+from dsa.constants import ROOT
 
 # ----------------------------
 # Model wrapper (same as yours)

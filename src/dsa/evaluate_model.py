@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 
-from src.constants import ROOT
+from dsa.constants import ROOT
 
 # TODO: Move to constants.py
 GT_JSON_PATH = ROOT / "data/evaluation_input/ground_truth.json"
