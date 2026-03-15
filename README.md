@@ -83,12 +83,12 @@ python src/dsa/evaluate_model.py --gt_json_path=path/to/ground_truth.json --pred
 2. Generate ground truth file `ground_truth.json`.
     1. Open Label Studio and select the project.
     2. Export using JSON format.
-    2. Run `python src/dsa/models/labelstudio.py --input_json_path=path/to/json`, making sure to point `input_json_path` to the file generated from the previous step.
+    2. Run `python src/dsa/adapters/labelstudio.py --input_json_path=path/to/json`, making sure to point `input_json_path` to the file generated from the previous step.
 
 ## Generating prediction files
 Supported models:
 - [yifeihu/TF-ID-large](https://huggingface.co/yifeihu/TF-ID-large)
-  - Run `python src/dsa/models/tfid.py` to generate `data/evaluation_input/tfid-large.json`.
+  - Run `python src/dsa/adapters/tfid.py` to generate `data/evaluation_input/tfid-large.json`.
 
 # Troubleshooting
 
