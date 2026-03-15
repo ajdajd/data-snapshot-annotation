@@ -6,43 +6,14 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-
 from dsa.constants import ROOT
+from dsa.utils import load_json, sanitize_bbox
 
 # TODO: Move to constants.py
 GT_JSON_PATH = ROOT / "data/evaluation_input/ground_truth.json"
 PRED_JSON_PATH = ROOT / "data/evaluation_input/chatgpt3.json"
 # TODO: Reference gt and pred file in report filename
 OUTPUT_REPORT_PATH = ROOT / "data/evaluation_output/report_chatgpt3.json"
-
-
-# -----------------------------
-# IO
-# -----------------------------
-
-
-def load_json(path: str | Path) -> dict:
-    with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
-
-
-# -----------------------------
-# Geometry
-# -----------------------------
-
-
-# TODO: Move to utils.py
-def _clamp01(x: float) -> float:
-    return 0.0 if x < 0.0 else 1.0 if x > 1.0 else x
-
-
-# TODO: Move to utils.py
-def bbox_sanitize(b: List[float]) -> Tuple[float, float, float, float]:
-    if not (isinstance(b, list) and len(b) == 4):
-        raise ValueError(f"Invalid bbox: {b}")
-    x1, y1, x2, y2 = map(float, b)
-    # Robustness: clamp to [0,1], do not reorder
-    return (_clamp01(x1), _clamp01(y1), _clamp01(x2), _clamp01(y2))
 
 
 def bbox_area(b: Tuple[float, float, float, float]) -> float:
@@ -141,7 +112,7 @@ def extract_objects(
             if not isinstance(label, str) or label not in supported:
                 continue
             obj_id = str(o.get("id", ""))
-            bb = bbox_sanitize(o.get("bbox"))
+            bb = sanitize_bbox(o.get("bbox"))
             if expect_score:
                 sc = o.get("score", None)
                 if sc is None:
