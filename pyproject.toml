@@ -21,7 +21,15 @@ evaluation = [
     "transformers==4.46.0",
     "torch==2.9.1",
 ]
+dev = [
+    "data-snapshot-annotation[evaluation]",
+    "pytest==9.0.2",
+]
 
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+
+[tool.pytest.ini_options]
+testpaths = ["tests/"]

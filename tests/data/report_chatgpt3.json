@@ -1,0 +1,91 @@
+{
+  "info": {
+    "schema_version": "1.3",
+    "gt_path": "tests/data/ground_truth.json",
+    "pred_path": "tests/data/chatgpt3.json"
+  },
+  "label_map": {
+    "1": "Figure",
+    "2": "Table"
+  },
+  "thresholds": [
+    0.5,
+    0.75
+  ],
+  "metrics": {
+    "0.5": {
+      "micro": {
+        "tp": 43,
+        "fp": 11,
+        "fn": 15,
+        "precision": 0.7962962962962963,
+        "recall": 0.7413793103448276,
+        "matched": 43,
+        "mean_iou": 0.9396757124252961,
+        "mean_area_precision": 0.9546965465194108,
+        "mean_area_recall": 0.9811788631802351
+      },
+      "per_class": {
+        "Figure": {
+          "tp": 39,
+          "fp": 9,
+          "fn": 13,
+          "precision": 0.8125,
+          "recall": 0.75,
+          "matched": 39,
+          "mean_iou": 0.9350192730088821,
+          "mean_area_precision": 0.9512330217558841,
+          "mean_area_recall": 0.9795967661715568
+        },
+        "Table": {
+          "tp": 4,
+          "fp": 2,
+          "fn": 2,
+          "precision": 0.6666666666666666,
+          "recall": 0.6666666666666666,
+          "matched": 4,
+          "mean_iou": 0.9850759967353316,
+          "mean_area_precision": 0.9884659129637938,
+          "mean_area_recall": 0.9966043090148501
+        }
+      }
+    },
+    "0.75": {
+      "micro": {
+        "tp": 40,
+        "fp": 14,
+        "fn": 18,
+        "precision": 0.7407407407407407,
+        "recall": 0.6896551724137931,
+        "matched": 40,
+        "mean_iou": 0.9638641139504746,
+        "mean_area_precision": 0.9776519008167381,
+        "mean_area_recall": 0.9858347970005428
+      },
+      "per_class": {
+        "Figure": {
+          "tp": 36,
+          "fp": 12,
+          "fn": 16,
+          "precision": 0.75,
+          "recall": 0.6923076923076923,
+          "matched": 36,
+          "mean_iou": 0.9615072380854903,
+          "mean_area_precision": 0.9764503439115096,
+          "mean_area_recall": 0.9846381845545085
+        },
+        "Table": {
+          "tp": 4,
+          "fp": 2,
+          "fn": 2,
+          "precision": 0.6666666666666666,
+          "recall": 0.6666666666666666,
+          "matched": 4,
+          "mean_iou": 0.9850759967353316,
+          "mean_area_precision": 0.9884659129637938,
+          "mean_area_recall": 0.9966043090148501
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,723 @@
+{
+  "label_map": {
+    "1": "Figure",
+    "2": "Table"
+  },
+  "info": {
+    "schema_version": "1.3",
+    "type": "prediction",
+    "run_id": "llm_layout_full_corpus_run",
+    "model": {
+      "name": "chatgpt-layout-reasoning",
+      "version": "prompt_v2_dataset_aware",
+      "notes": "Semantic snapshot detection without GT usage"
+    },
+    "coordinate_system": {
+      "type": "normalized_xyxy",
+      "range": [0.0, 1.0],
+      "origin": "top_left"
+    }
+  },
+  "documents": [
+    {
+      "doc_id": "230306_afg_protection_analysis_updates_february_2023.pdf",
+      "doc_name": "230306_afg_protection_analysis_updates_february_2023.pdf",
+      "doc_path": "pdf_input/230306_afg_protection_analysis_updates_february_2023.pdf"
+    },
+    {
+      "doc_id": "civil_documentation_factsheet_final.pdf",
+      "doc_name": "civil_documentation_factsheet_final.pdf",
+      "doc_path": "pdf_input/civil_documentation_factsheet_final.pdf"
+    },
+    {
+      "doc_id": "intersos_-_rapport_mensuel_de_protection_aout_2020_-boucle_du_mouhoun_-_version_du_10-09-2020.pdf",
+      "doc_name": "intersos_-_rapport_mensuel_de_protection_aout_2020_-boucle_du_mouhoun_-_version_du_10-09-2020.pdf",
+      "doc_path": "pdf_input/intersos_-_rapport_mensuel_de_protection_aout_2020_-boucle_du_mouhoun_-_version_du_10-09-2020.pdf"
+    },
+    {
+      "doc_id": "jordanhaus2015finalreport-2.pdf",
+      "doc_name": "jordanhaus2015finalreport-2.pdf",
+      "doc_path": "pdf_input/jordanhaus2015finalreport-2.pdf"
+    },
+    {
+      "doc_id": "rapport_mensuel_monitoring_de_protection_de_la_region_de_maradi_au_niger_octobre_2022.pdf",
+      "doc_name": "rapport_mensuel_monitoring_de_protection_de_la_region_de_maradi_au_niger_octobre_2022.pdf",
+      "doc_path": "pdf_input/rapport_mensuel_monitoring_de_protection_de_la_region_de_maradi_au_niger_octobre_2022.pdf"
+    },
+    {
+      "doc_id": "3rp-media-backgrounder.pdf",
+      "doc_name": "3rp-media-backgrounder.pdf",
+      "doc_path": "pdf_input/3rp-media-backgrounder.pdf"
+    },
+    {
+      "doc_id": "5fb3ad4d4.pdf",
+      "doc_name": "5fb3ad4d4.pdf",
+      "doc_path": "pdf_input/5fb3ad4d4.pdf"
+    },
+    {
+      "doc_id": "68487.pdf",
+      "doc_name": "68487.pdf",
+      "doc_path": "pdf_input/68487.pdf"
+    },
+    {
+      "doc_id": "202501_bn_older_refugees_moldova_eng.pdf",
+      "doc_name": "202501_bn_older_refugees_moldova_eng.pdf",
+      "doc_path": "pdf_input/202501_bn_older_refugees_moldova_eng.pdf"
+    },
+    {
+      "doc_id": "analyse_environnement_de_protection_des_regions_de_segou_san_v2_final.pdf",
+      "doc_name": "analyse_environnement_de_protection_des_regions_de_segou_san_v2_final.pdf",
+      "doc_path": "pdf_input/analyse_environnement_de_protection_des_regions_de_segou_san_v2_final.pdf"
+    }
+  ],
+  "predictions": [
+
+    {
+      "page_id": "230306_afg_protection_analysis_updates_february_2023.pdf::p001",
+      "doc_id": "230306_afg_protection_analysis_updates_february_2023.pdf",
+      "page_index": 1,
+      "objects": [
+        {
+          "id": "afg_p001_fig01",
+          "label": "Figure",
+          "bbox": [0.46, 0.17, 0.92, 0.44],
+          "score": 0.95
+        }
+      ]
+    },
+
+    {
+      "page_id": "230306_afg_protection_analysis_updates_february_2023.pdf::p002",
+      "doc_id": "230306_afg_protection_analysis_updates_february_2023.pdf",
+      "page_index": 2,
+      "objects": [
+        {
+          "id": "afg_p002_review01",
+          "label": "For review",
+          "bbox": [0.08, 0.14, 0.91, 0.24],
+          "score": 0.82
+        }
+      ]
+    },
+
+    {
+      "page_id": "230306_afg_protection_analysis_updates_february_2023.pdf::p004",
+      "doc_id": "230306_afg_protection_analysis_updates_february_2023.pdf",
+      "page_index": 4,
+      "objects": [
+        {
+          "id": "afg_p004_fig01",
+          "label": "Figure",
+          "bbox": [0.07, 0.21, 0.53, 0.45],
+          "score": 0.95
+        },
+        {
+          "id": "afg_p004_fig02",
+          "label": "Figure",
+          "bbox": [0.47, 0.51, 0.92, 0.70],
+          "score": 0.95
+        },
+        {
+          "id": "afg_p004_fig03",
+          "label": "Figure",
+          "bbox": [0.07, 0.73, 0.55, 0.92],
+          "score": 0.95
+        }
+      ]
+    },
+
+    {
+      "page_id": "230306_afg_protection_analysis_updates_february_2023.pdf::p005",
+      "doc_id": "230306_afg_protection_analysis_updates_february_2023.pdf",
+      "page_index": 5,
+      "objects": [
+        {
+          "id": "afg_p005_fig01",
+          "label": "Figure",
+          "bbox": [0.30, 0.22, 0.91, 0.42],
+          "score": 0.94
+        }
+      ]
+    },
+
+    {
+      "page_id": "230306_afg_protection_analysis_updates_february_2023.pdf::p008",
+      "doc_id": "230306_afg_protection_analysis_updates_february_2023.pdf",
+      "page_index": 8,
+      "objects": [
+        {
+          "id": "afg_p008_fig01",
+          "label": "Figure",
+          "bbox": [0.10, 0.18, 0.37, 0.36],
+          "score": 0.93
+        },
+        {
+          "id": "afg_p008_fig02",
+          "label": "Figure",
+          "bbox": [0.66, 0.18, 0.90, 0.37],
+          "score": 0.93
+        },
+        {
+          "id": "afg_p008_fig03",
+          "label": "Figure",
+          "bbox": [0.52, 0.43, 0.91, 0.63],
+          "score": 0.94
+        },
+        {
+          "id": "afg_p008_fig04",
+          "label": "Figure",
+          "bbox": [0.26, 0.75, 0.91, 0.91],
+          "score": 0.94
+        }
+      ]
+    },
+    {
+      "page_id": "civil_documentation_factsheet_final.pdf::p000",
+      "doc_id": "civil_documentation_factsheet_final.pdf",
+      "page_index": 0,
+      "objects": [
+        {
+          "id": "cameroon_p000_fig01",
+          "label": "Figure",
+          "bbox": [0.06, 0.12, 0.96, 0.32],
+          "score": 0.94
+        },
+        {
+          "id": "cameroon_p000_fig02",
+          "label": "Figure",
+          "bbox": [0.07, 0.64, 0.93, 0.92],
+          "score": 0.95
+        }
+      ]
+    },
+
+    {
+      "page_id": "civil_documentation_factsheet_final.pdf::p001",
+      "doc_id": "civil_documentation_factsheet_final.pdf",
+      "page_index": 1,
+      "objects": [
+        {
+          "id": "cameroon_p001_fig01",
+          "label": "Figure",
+          "bbox": [0.05, 0.10, 0.95, 0.55],
+          "score": 0.95
+        }
+      ]
+    },
+
+    {
+      "page_id": "intersos_-_rapport_mensuel_de_protection_aout_2020_-boucle_du_mouhoun_-_version_du_10-09-2020.pdf::p000",
+      "doc_id": "intersos_-_rapport_mensuel_de_protection_aout_2020_-boucle_du_mouhoun_-_version_du_10-09-2020.pdf",
+      "page_index": 0,
+      "objects": [
+        {
+          "id": "intersos_p000_table01",
+          "label": "Table",
+          "bbox": [0.08, 0.14, 0.90, 0.40],
+          "score": 0.96
+        },
+        {
+          "id": "intersos_p000_fig01",
+          "label": "Figure",
+          "bbox": [0.09, 0.40, 0.89, 0.68],
+          "score": 0.95
+        }
+      ]
+    },
+
+    {
+      "page_id": "intersos_-_rapport_mensuel_de_protection_aout_2020_-boucle_du_mouhoun_-_version_du_10-09-2020.pdf::p001",
+      "doc_id": "intersos_-_rapport_mensuel_de_protection_aout_2020_-boucle_du_mouhoun_-_version_du_10-09-2020.pdf",
+      "page_index": 1,
+      "objects": [
+        {
+          "id": "intersos_p001_fig01",
+          "label": "Figure",
+          "bbox": [0.16, 0.66, 0.83, 0.91],
+          "score": 0.94
+        }
+      ]
+    },
+
+    {
+      "page_id": "intersos_-_rapport_mensuel_de_protection_aout_2020_-boucle_du_mouhoun_-_version_du_10-09-2020.pdf::p002",
+      "doc_id": "intersos_-_rapport_mensuel_de_protection_aout_2020_-boucle_du_mouhoun_-_version_du_10-09-2020.pdf",
+      "page_index": 2,
+      "objects": [
+        {
+          "id": "intersos_p002_fig01",
+          "label": "Figure",
+          "bbox": [0.09, 0.38, 0.91, 0.59],
+          "score": 0.94
+        }
+      ]
+    },
+
+    {
+      "page_id": "intersos_-_rapport_mensuel_de_protection_aout_2020_-boucle_du_mouhoun_-_version_du_10-09-2020.pdf::p003",
+      "doc_id": "intersos_-_rapport_mensuel_de_protection_aout_2020_-boucle_du_mouhoun_-_version_du_10-09-2020.pdf",
+      "page_index": 3,
+      "objects": [
+        {
+          "id": "intersos_p003_fig01",
+          "label": "Figure",
+          "bbox": [0.12, 0.63, 0.87, 0.84],
+          "score": 0.94
+        }
+      ]
+    },
+
+    {
+      "page_id": "intersos_-_rapport_mensuel_de_protection_aout_2020_-boucle_du_mouhoun_-_version_du_10-09-2020.pdf::p007",
+      "doc_id": "intersos_-_rapport_mensuel_de_protection_aout_2020_-boucle_du_mouhoun_-_version_du_10-09-2020.pdf",
+      "page_index": 7,
+      "objects": [
+        {
+          "id": "intersos_p007_table01",
+          "label": "Table",
+          "bbox": [0.09, 0.22, 0.91, 0.93],
+          "score": 0.96
+        }
+      ]
+    },
+
+    {
+      "page_id": "intersos_-_rapport_mensuel_de_protection_aout_2020_-boucle_du_mouhoun_-_version_du_10-09-2020.pdf::p008",
+      "doc_id": "intersos_-_rapport_mensuel_de_protection_aout_2020_-boucle_du_mouhoun_-_version_du_10-09-2020.pdf",
+      "page_index": 8,
+      "objects": [
+        {
+          "id": "intersos_p008_table01",
+          "label": "Table",
+          "bbox": [0.09, 0.08, 0.91, 0.92],
+          "score": 0.96
+        }
+      ]
+    },
+
+    {
+      "page_id": "intersos_-_rapport_mensuel_de_protection_aout_2020_-boucle_du_mouhoun_-_version_du_10-09-2020.pdf::p009",
+      "doc_id": "intersos_-_rapport_mensuel_de_protection_aout_2020_-boucle_du_mouhoun_-_version_du_10-09-2020.pdf",
+      "page_index": 9,
+      "objects": [
+        {
+          "id": "intersos_p009_table01",
+          "label": "Table",
+          "bbox": [0.09, 0.08, 0.91, 0.30],
+          "score": 0.95
+        }
+      ]
+    },
+    {
+      "page_id": "jordanhaus2015finalreport-2.pdf::p003",
+      "doc_id": "jordanhaus2015finalreport-2.pdf",
+      "page_index": 3,
+      "objects": [
+        {
+          "id": "jordan_p003_fig01",
+          "label": "Figure",
+          "bbox": [0.38, 0.10, 0.90, 0.40],
+          "score": 0.94
+        },
+        {
+          "id": "jordan_p003_fig02",
+          "label": "Figure",
+          "bbox": [0.38, 0.40, 0.91, 0.64],
+          "score": 0.94
+        },
+        {
+          "id": "jordan_p003_fig03",
+          "label": "Figure",
+          "bbox": [0.37, 0.64, 0.92, 0.89],
+          "score": 0.94
+        },
+        {
+          "id": "jordan_p003_review01",
+          "label": "For review",
+          "bbox": [0.06, 0.10, 0.33, 0.91],
+          "score": 0.80
+        }
+      ]
+    },
+
+    {
+      "page_id": "jordanhaus2015finalreport-2.pdf::p004",
+      "doc_id": "jordanhaus2015finalreport-2.pdf",
+      "page_index": 4,
+      "objects": [
+        {
+          "id": "jordan_p004_fig01",
+          "label": "Figure",
+          "bbox": [0.39, 0.13, 0.93, 0.36],
+          "score": 0.94
+        },
+        {
+          "id": "jordan_p004_fig02",
+          "label": "Figure",
+          "bbox": [0.39, 0.37, 0.94, 0.62],
+          "score": 0.94
+        },
+        {
+          "id": "jordan_p004_fig03",
+          "label": "Figure",
+          "bbox": [0.35, 0.63, 0.94, 0.91],
+          "score": 0.94
+        },
+        {
+          "id": "jordan_p004_review01",
+          "label": "For review",
+          "bbox": [0.06, 0.13, 0.34, 0.91],
+          "score": 0.80
+        }
+      ]
+    },
+
+    {
+      "page_id": "jordanhaus2015finalreport-2.pdf::p005",
+      "doc_id": "jordanhaus2015finalreport-2.pdf",
+      "page_index": 5,
+      "objects": [
+        {
+          "id": "jordan_p005_fig01",
+          "label": "Figure",
+          "bbox": [0.37, 0.29, 0.94, 0.56],
+          "score": 0.94
+        },
+        {
+          "id": "jordan_p005_fig02",
+          "label": "Figure",
+          "bbox": [0.37, 0.57, 0.94, 0.83],
+          "score": 0.94
+        },
+        {
+          "id": "jordan_p005_review01",
+          "label": "For review",
+          "bbox": [0.06, 0.29, 0.34, 0.91],
+          "score": 0.80
+        }
+      ]
+    },
+
+    {
+      "page_id": "jordanhaus2015finalreport-2.pdf::p006",
+      "doc_id": "jordanhaus2015finalreport-2.pdf",
+      "page_index": 6,
+      "objects": [
+        {
+          "id": "jordan_p006_fig01",
+          "label": "Figure",
+          "bbox": [0.38, 0.02, 0.93, 0.24],
+          "score": 0.94
+        },
+        {
+          "id": "jordan_p006_fig02",
+          "label": "Figure",
+          "bbox": [0.38, 0.31, 0.97, 0.57],
+          "score": 0.94
+        },
+        {
+          "id": "jordan_p006_fig03",
+          "label": "Figure",
+          "bbox": [0.38, 0.59, 0.97, 0.86],
+          "score": 0.94
+        },
+        {
+          "id": "jordan_p006_review01",
+          "label": "For review",
+          "bbox": [0.06, 0.02, 0.34, 0.26],
+          "score": 0.80
+        }
+      ]
+    },
+
+    {
+      "page_id": "jordanhaus2015finalreport-2.pdf::p007",
+      "doc_id": "jordanhaus2015finalreport-2.pdf",
+      "page_index": 7,
+      "objects": [
+        {
+          "id": "jordan_p007_fig01",
+          "label": "Figure",
+          "bbox": [0.38, 0.02, 0.97, 0.26],
+          "score": 0.94
+        },
+        {
+          "id": "jordan_p007_fig02",
+          "label": "Figure",
+          "bbox": [0.36, 0.35, 0.96, 0.62],
+          "score": 0.94
+        },
+        {
+          "id": "jordan_p007_fig03",
+          "label": "Figure",
+          "bbox": [0.37, 0.63, 0.95, 0.89],
+          "score": 0.94
+        },
+        {
+          "id": "jordan_p007_review01",
+          "label": "For review",
+          "bbox": [0.06, 0.02, 0.36, 0.29],
+          "score": 0.80
+        }
+      ]
+    },
+
+    {
+      "page_id": "jordanhaus2015finalreport-2.pdf::p008",
+      "doc_id": "jordanhaus2015finalreport-2.pdf",
+      "page_index": 8,
+      "objects": [
+        {
+          "id": "jordan_p008_fig01",
+          "label": "Figure",
+          "bbox": [0.37, 0.04, 0.93, 0.30],
+          "score": 0.94
+        },
+        {
+          "id": "jordan_p008_fig02",
+          "label": "Figure",
+          "bbox": [0.37, 0.43, 0.94, 0.68],
+          "score": 0.94
+        },
+        {
+          "id": "jordan_p008_review01",
+          "label": "For review",
+          "bbox": [0.06, 0.02, 0.35, 0.31],
+          "score": 0.80
+        }
+      ]
+    },
+
+    {
+      "page_id": "jordanhaus2015finalreport-2.pdf::p009",
+      "doc_id": "jordanhaus2015finalreport-2.pdf",
+      "page_index": 9,
+      "objects": [
+        {
+          "id": "jordan_p009_fig01",
+          "label": "Figure",
+          "bbox": [0.38, 0.02, 0.93, 0.25],
+          "score": 0.94
+        },
+        {
+          "id": "jordan_p009_fig02",
+          "label": "Figure",
+          "bbox": [0.38, 0.27, 0.93, 0.49],
+          "score": 0.94
+        },
+        {
+          "id": "jordan_p009_fig03",
+          "label": "Figure",
+          "bbox": [0.35, 0.57, 0.96, 0.85],
+          "score": 0.94
+        },
+        {
+          "id": "jordan_p009_review01",
+          "label": "For review",
+          "bbox": [0.06, 0.02, 0.34, 0.49],
+          "score": 0.80
+        }
+      ]
+    },
+
+    {
+      "page_id": "jordanhaus2015finalreport-2.pdf::p010",
+      "doc_id": "jordanhaus2015finalreport-2.pdf",
+      "page_index": 10,
+      "objects": [
+        {
+          "id": "jordan_p010_fig01",
+          "label": "Figure",
+          "bbox": [0.35, 0.02, 0.96, 0.24],
+          "score": 0.94
+        },
+        {
+          "id": "jordan_p010_fig02",
+          "label": "Figure",
+          "bbox": [0.35, 0.27, 0.96, 0.55],
+          "score": 0.94
+        },
+        {
+          "id": "jordan_p010_review01",
+          "label": "For review",
+          "bbox": [0.06, 0.02, 0.34, 0.58],
+          "score": 0.80
+        }
+      ]
+    },
+    {
+      "page_id": "rapport_mensuel_monitoring_de_protection_de_la_region_de_maradi_au_niger_octobre_2022.pdf::p001",
+      "doc_id": "rapport_mensuel_monitoring_de_protection_de_la_region_de_maradi_au_niger_octobre_2022.pdf",
+      "page_index": 1,
+      "objects": [
+        {
+          "id": "maradi_p001_table01",
+          "label": "Table",
+          "bbox": [0.07, 0.18, 0.93, 0.74],
+          "score": 0.96
+        }
+      ]
+    },
+
+    {
+      "page_id": "rapport_mensuel_monitoring_de_protection_de_la_region_de_maradi_au_niger_octobre_2022.pdf::p002",
+      "doc_id": "rapport_mensuel_monitoring_de_protection_de_la_region_de_maradi_au_niger_octobre_2022.pdf",
+      "page_index": 2,
+      "objects": [
+        {
+          "id": "maradi_p002_fig01",
+          "label": "Figure",
+          "bbox": [0.08, 0.22, 0.92, 0.60],
+          "score": 0.95
+        }
+      ]
+    },
+
+    {
+      "page_id": "rapport_mensuel_monitoring_de_protection_de_la_region_de_maradi_au_niger_octobre_2022.pdf::p003",
+      "doc_id": "rapport_mensuel_monitoring_de_protection_de_la_region_de_maradi_au_niger_octobre_2022.pdf",
+      "page_index": 3,
+      "objects": [
+        {
+          "id": "maradi_p003_fig01",
+          "label": "Figure",
+          "bbox": [0.07, 0.24, 0.93, 0.63],
+          "score": 0.95
+        }
+      ]
+    },
+
+    {
+      "page_id": "3rp-media-backgrounder.pdf::p001",
+      "doc_id": "3rp-media-backgrounder.pdf",
+      "page_index": 1,
+      "objects": [
+        {
+          "id": "3rp_p001_fig01",
+          "label": "Figure",
+          "bbox": [0.06, 0.10, 0.94, 0.90],
+          "score": 0.96
+        }
+      ]
+    },
+
+    {
+      "page_id": "3rp-media-backgrounder.pdf::p002",
+      "doc_id": "3rp-media-backgrounder.pdf",
+      "page_index": 2,
+      "objects": [
+        {
+          "id": "3rp_p002_fig01",
+          "label": "Figure",
+          "bbox": [0.05, 0.06, 0.95, 0.93],
+          "score": 0.96
+        }
+      ]
+    },
+
+    {
+      "page_id": "5fb3ad4d4.pdf::p004",
+      "doc_id": "5fb3ad4d4.pdf",
+      "page_index": 4,
+      "objects": [
+        {
+          "id": "doc5fb_p004_fig01",
+          "label": "Figure",
+          "bbox": [0.09, 0.30, 0.91, 0.65],
+          "score": 0.94
+        }
+      ]
+    },
+
+    {
+      "page_id": "68487.pdf::p002",
+      "doc_id": "68487.pdf",
+      "page_index": 2,
+      "objects": [
+        {
+          "id": "doc68487_p002_table01",
+          "label": "Table",
+          "bbox": [0.07, 0.18, 0.93, 0.86],
+          "score": 0.96
+        }
+      ]
+    },
+
+    {
+      "page_id": "202501_bn_older_refugees_moldova_eng.pdf::p003",
+      "doc_id": "202501_bn_older_refugees_moldova_eng.pdf",
+      "page_index": 3,
+      "objects": [
+        {
+          "id": "moldova_p003_fig01",
+          "label": "Figure",
+          "bbox": [0.08, 0.20, 0.92, 0.58],
+          "score": 0.95
+        }
+      ]
+    },
+
+    {
+      "page_id": "analyse_environnement_de_protection_des_regions_de_segou_san_v2_final.pdf::p002",
+      "doc_id": "analyse_environnement_de_protection_des_regions_de_segou_san_v2_final.pdf",
+      "page_index": 2,
+      "objects": [
+        {
+          "id": "segou_p002_fig01",
+          "label": "Figure",
+          "bbox": [0.08, 0.32, 0.92, 0.60],
+          "score": 0.95
+        },
+        {
+          "id": "segou_p002_fig02",
+          "label": "Figure",
+          "bbox": [0.08, 0.62, 0.92, 0.92],
+          "score": 0.95
+        }
+      ]
+    },
+
+    {
+      "page_id": "analyse_environnement_de_protection_des_regions_de_segou_san_v2_final.pdf::p003",
+      "doc_id": "analyse_environnement_de_protection_des_regions_de_segou_san_v2_final.pdf",
+      "page_index": 3,
+      "objects": [
+        {
+          "id": "segou_p003_fig01",
+          "label": "Figure",
+          "bbox": [0.08, 0.48, 0.52, 0.90],
+          "score": 0.94
+        }
+      ]
+    },
+
+    {
+      "page_id": "analyse_environnement_de_protection_des_regions_de_segou_san_v2_final.pdf::p004",
+      "doc_id": "analyse_environnement_de_protection_des_regions_de_segou_san_v2_final.pdf",
+      "page_index": 4,
+      "objects": [
+        {
+          "id": "segou_p004_fig01",
+          "label": "Figure",
+          "bbox": [0.08, 0.20, 0.62, 0.60],
+          "score": 0.94
+        }
+      ]
+    },
+	
+    {
+      "page_id": "analyse_environnement_de_protection_des_regions_de_segou_san_v2_final.pdf::p005",
+      "doc_id": "analyse_environnement_de_protection_des_regions_de_segou_san_v2_final.pdf",
+      "page_index": 5,
+      "objects": [
+        {
+          "id": "segou_p005_fig01",
+          "label": "Figure",
+          "bbox": [0.08, 0.22, 0.62, 0.68],
+          "score": 0.94
+        }
+      ]
+    }
+
+  ]
+}
