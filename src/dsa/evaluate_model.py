@@ -6,14 +6,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-from dsa.constants import ROOT
+from dsa.constants import ROOT, GT_JSON_PATH, PRED_JSON_PATH, OUTPUT_REPORT_PATH
 from dsa.utils import load_json, sanitize_bbox
-
-# TODO: Move to constants.py
-GT_JSON_PATH = ROOT / "data/evaluation_input/ground_truth.json"
-PRED_JSON_PATH = ROOT / "data/evaluation_input/chatgpt3.json"
-# TODO: Reference gt and pred file in report filename
-OUTPUT_REPORT_PATH = ROOT / "data/evaluation_output/report_chatgpt3.json"
 
 
 def bbox_area(b: Tuple[float, float, float, float]) -> float:
