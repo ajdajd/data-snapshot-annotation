@@ -300,8 +300,8 @@ def evaluate(
     report: Dict[str, Any] = {
         "info": {
             "schema_version": (pred.get("info", {}) or {}).get("schema_version", "1.3"),
-            "gt_path": str(ground_truth_path),
-            "pred_path": str(prediction_path),
+            "gt_path": str(ground_truth_path.resolve().relative_to(ROOT)),
+            "pred_path": str(prediction_path.resolve().relative_to(ROOT)),
         },
         "label_map": label_map,
         "thresholds": list(iou_thresholds),
