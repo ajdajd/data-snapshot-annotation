@@ -1,12 +1,19 @@
 from __future__ import annotations
 
+import argparse
 import json
 import math
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-from dsa.constants import ROOT, GT_JSON_PATH, PRED_JSON_PATH, OUTPUT_REPORT_PATH
+from dsa.constants import (
+    ROOT,
+    GT_JSON_PATH,
+    PRED_JSON_PATH,
+    OUTPUT_REPORT_PATH,
+    IOU_THRESHOLDS,
+)
 from dsa.utils import load_json, sanitize_bbox
 
 
@@ -242,14 +249,17 @@ def print_document_mismatch(gt: dict, pred: dict) -> None:
 
 
 def evaluate(
-    ground_truth_path: str | Path,
-    prediction_path: str | Path,
+    gt_json_path: str | Path,
+    pred_json_path: str | Path,
     *,
     iou_thresholds: Tuple[float, ...] = (0.5, 0.75),
     output_path: Optional[str | Path] = None,
 ) -> Dict[str, Any]:
-    gt = load_json(ground_truth_path)
-    pred = load_json(prediction_path)
+    gt_json_path = Path(gt_json_path)
+    pred_json_path = Path(pred_json_path)
+
+    gt = load_json(gt_json_path)
+    pred = load_json(pred_json_path)
 
     # minimal check requested
     print_document_mismatch(gt, pred)
@@ -265,8 +275,8 @@ def evaluate(
     report: Dict[str, Any] = {
         "info": {
             "schema_version": (pred.get("info", {}) or {}).get("schema_version", "1.3"),
-            "gt_path": str(ground_truth_path.resolve().relative_to(ROOT)),
-            "pred_path": str(prediction_path.resolve().relative_to(ROOT)),
+            "gt_path": str(gt_json_path.resolve().relative_to(ROOT)),
+            "pred_path": str(pred_json_path.resolve().relative_to(ROOT)),
         },
         "label_map": label_map,
         "thresholds": list(iou_thresholds),
@@ -290,8 +300,6 @@ def evaluate(
                 pred_lab = [o for o in pred_objs_all if o.label == lab]
 
                 matches, unmatched_p, unmatched_g = greedy_match(gt_lab, pred_lab, thr)
-
-                # TODO: Implement snapshot saving of tp, fp, fn
 
                 st = per_class[lab]
                 for pi, gi, _v in matches:
@@ -343,8 +351,6 @@ def evaluate(
 
 
 if __name__ == "__main__":
-    import argparse
-
     ap = argparse.ArgumentParser()
     ap.add_argument(
         "--gt_json_path",
@@ -365,18 +371,15 @@ if __name__ == "__main__":
         "--thr",
         nargs="*",
         type=float,
-        default=[0.5, 0.75],
+        default=IOU_THRESHOLDS,
         help="IoU thresholds (space separated)",
     )
     args = ap.parse_args()
 
     rep = evaluate(
-        args.gt_json_path,
-        args.pred_json_path,
+        gt_json_path=args.gt_json_path,
+        pred_json_path=args.pred_json_path,
         iou_thresholds=tuple(args.thr),
         output_path=args.output_report_path,
     )
-    print(json.dumps(rep, indent=4, ensure_ascii=False))
-    # TODO: Don't print the entire dump. Just print the file path of report.json.
-
-    # TODO: Implement bbox visualizations for human checking of FP and FN. Maybe a different module that takes in 2 json paths.
+    print(f"Done! Evaluations report saved at {args.output_report_path}")

@@ -12,8 +12,8 @@ def test_evaluate_model():
 
     ref = load_json(ref_path)
     res = evaluate(
-        ground_truth_path=gt_path,
-        prediction_path=pred_path,
+        gt_json_path=gt_path,
+        pred_json_path=pred_path,
         iou_thresholds=(0.5, 0.75),
         output_path=None,
     )
