@@ -63,11 +63,6 @@ def area_precision(
     return inter / p if p > 0.0 else 0.0
 
 
-# -----------------------------
-# Indexing / extraction
-# -----------------------------
-
-
 @dataclass(frozen=True)
 class DetObj:
     page_id: str
@@ -103,17 +98,11 @@ def prepare_prediction_objects(
     return objs
 
 
-# -----------------------------
-# Matching + metrics
-# -----------------------------
-
-
 @dataclass
 class Stats:
     tp: int = 0
     fp: int = 0
     fn: int = 0
-
     matched: int = 0
     iou_sum: float = 0.0
     area_recall_sum: float = 0.0
@@ -157,23 +146,26 @@ def greedy_match(
     Greedy one-to-one matching by IoU descending, using only pairs with IoU >= thr.
     Returns matches as (pred_idx, gt_idx, iou).
     """
+    # Prepare list of pairs meeting minimum threshold
     cand: List[Tuple[float, int, int]] = []
-    for pi, p in enumerate(pred):
-        for gi, g in enumerate(gt):
+    for p_idx, p in enumerate(pred):
+        for g_idx, g in enumerate(gt):
             v = iou(p.bbox, g.bbox)
             if v >= thr:
-                cand.append((v, pi, gi))
+                cand.append((p_idx, g_idx, v))
 
-    cand.sort(reverse=True, key=lambda t: t[0])
+    # Sort descending
+    cand.sort(reverse=True, key=lambda t: t[2])
 
+    # Traverse sorted list while removing matched items
     used_p, used_g = set(), set()
     matches: List[Tuple[int, int, float]] = []
-    for v, pi, gi in cand:
-        if pi in used_p or gi in used_g:
+    for p_idx, g_idx, v in cand:
+        if p_idx in used_p or g_idx in used_g:
             continue
-        used_p.add(pi)
-        used_g.add(gi)
-        matches.append((pi, gi, v))
+        used_p.add(p_idx)
+        used_g.add(g_idx)
+        matches.append((p_idx, g_idx, v))
 
     unmatched_p = [i for i in range(len(pred)) if i not in used_p]
     unmatched_g = [i for i in range(len(gt)) if i not in used_g]
@@ -214,11 +206,6 @@ def get_document_mismatch(gt: dict, pred: dict) -> Tuple[List[str], List[str]]:
             print(f"  - {x}")
 
     return only_gt, only_pred
-
-
-# -----------------------------
-# Main evaluate
-# -----------------------------
 
 
 def evaluate(
@@ -275,9 +262,9 @@ def evaluate(
                 matches, unmatched_p, unmatched_g = greedy_match(gt_lab, pred_lab, thr)
 
                 st = per_class[lab]
-                for pi, gi, _v in matches:
-                    pred_box = pred_lab[pi].bbox
-                    gt_box = gt_lab[gi].bbox
+                for p_idx, g_idx, _ in matches:
+                    pred_box = pred_lab[p_idx].bbox
+                    gt_box = gt_lab[g_idx].bbox
                     st.add_match(pred_box, gt_box)
                     micro.add_match(pred_box, gt_box)
 
