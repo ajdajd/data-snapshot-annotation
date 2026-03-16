@@ -15,6 +15,7 @@ def test_evaluate_model():
         gt_json_path=gt_path,
         pred_json_path=pred_path,
         iou_thresholds=(0.5, 0.75),
+        labels=["Figure", "Table"],
         output_path=None,
     )
     assert json.dumps(ref) == json.dumps(res)

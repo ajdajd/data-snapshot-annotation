@@ -13,6 +13,7 @@ from dsa.constants import (
     PRED_JSON_PATH,
     OUTPUT_REPORT_PATH,
     IOU_THRESHOLDS,
+    LABELS_TO_CONSIDER,
 )
 from dsa.utils import load_json, sanitize_bbox
 
@@ -87,17 +88,6 @@ def index_pages(predictions: List[dict]) -> Dict[Tuple[str, int], List[dict]]:
         if isinstance(doc_id, str) and isinstance(page_index, int):
             out.setdefault((doc_id, page_index), []).append(p)
     return out
-
-
-def supported_labels_from_label_map(label_map: Dict[str, str]) -> List[str]:
-    # Preserve order of first appearance of values
-    seen = set()
-    labels: List[str] = []
-    for _, v in (label_map or {}).items():
-        if isinstance(v, str) and v not in seen:
-            labels.append(v)
-            seen.add(v)
-    return labels
 
 
 def extract_objects(
@@ -249,8 +239,10 @@ def evaluate(
     pred_json_path: str | Path,
     *,
     iou_thresholds: Tuple[float, ...] = (0.5, 0.75),
+    labels: Tuple[str, ...] = ("Figure", "Table"),
     output_path: Optional[str | Path] = None,
 ) -> Dict[str, Any]:
+    print(labels)
     gt_json_path = Path(gt_json_path)
     pred_json_path = Path(pred_json_path)
 
@@ -261,14 +253,12 @@ def evaluate(
     print_document_mismatch(gt, pred)
     # TODO: Keep common/intersecting files only for fair evaluation if files are missing.
 
-    label_map = gt.get("label_map") or pred.get("label_map") or {}
-    labels = supported_labels_from_label_map(label_map)
-    supported = set(labels)
-
     gt_pages = index_pages(gt.get("predictions", []) or [])
     pred_pages = index_pages(pred.get("predictions", []) or [])
     all_keys = set(gt_pages.keys()) | set(pred_pages.keys())
 
+    # Prepare report dict
+    label_map = gt.get("label_map")
     report: Dict[str, Any] = {
         "info": {
             "schema_version": (pred.get("info", {}) or {}).get("schema_version", "1.3"),
@@ -280,16 +270,17 @@ def evaluate(
         "metrics": {},
     }
 
+    print(labels)
     for thr in iou_thresholds:
         per_class: Dict[str, Stats] = {lab: Stats() for lab in labels}
         micro = Stats()
 
         for key in sorted(all_keys):
             gt_objs_all = extract_objects(
-                gt_pages.get(key, []), supported, expect_score=False
+                gt_pages.get(key, []), labels, expect_score=False
             )
             pred_objs_all = extract_objects(
-                pred_pages.get(key, []), supported, expect_score=True
+                pred_pages.get(key, []), labels, expect_score=True
             )
 
             for lab in labels:
@@ -371,12 +362,20 @@ if __name__ == "__main__":
         default=IOU_THRESHOLDS,
         help="IoU thresholds (space separated)",
     )
+    ap.add_argument(
+        "--labels",
+        nargs="*",
+        type=str,
+        default=LABELS_TO_CONSIDER,
+        help="Labels to consider (space separated)",
+    )
     args = ap.parse_args()
 
     rep = evaluate(
         gt_json_path=args.gt_json_path,
         pred_json_path=args.pred_json_path,
         iou_thresholds=tuple(args.thr),
+        labels=tuple(args.labels),
         output_path=args.output_report_path,
     )
     print(f"Done! Evaluations report saved at {args.output_report_path}")
