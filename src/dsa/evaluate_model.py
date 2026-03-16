@@ -238,6 +238,7 @@ def evaluate(
     schema_version = gt.get("info").get("schema_version")
     label_map = gt.get("label_map")
     label_map = {k: v for k, v in label_map.items() if v in labels}
+    doc_mismatch = {"only_gt": only_gt, "only_pred": only_pred}
     report: Dict[str, Any] = {
         "info": {
             "schema_version": schema_version,
@@ -246,7 +247,7 @@ def evaluate(
         },
         "label_map": label_map,
         "thresholds": list(iou_thresholds),
-        # TODO: Add document mismatch list
+        "documents_mismatch": doc_mismatch,
         "metrics": {},
     }
 
