@@ -242,10 +242,9 @@ def evaluate(
     labels: Tuple[str, ...] = ("Figure", "Table"),
     output_path: Optional[str | Path] = None,
 ) -> Dict[str, Any]:
-    print(labels)
+    # Load files
     gt_json_path = Path(gt_json_path)
     pred_json_path = Path(pred_json_path)
-
     gt = load_json(gt_json_path)
     pred = load_json(pred_json_path)
 
@@ -272,6 +271,7 @@ def evaluate(
         "metrics": {},
     }
 
+    # Calculate metrics
     for thr in iou_thresholds:
         per_class: Dict[str, Stats] = {lab: Stats() for lab in labels}
         micro = Stats()
@@ -330,6 +330,7 @@ def evaluate(
             },
         }
 
+    # Save report
     if output_path is not None:
         outp = Path(output_path)
         outp.parent.mkdir(parents=True, exist_ok=True)
