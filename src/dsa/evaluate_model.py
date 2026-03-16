@@ -203,41 +203,37 @@ def greedy_match(
     return matches, unmatched_p, unmatched_g
 
 
-# -----------------------------
-# "Validation": document mismatch only
-# -----------------------------
+def get_doc_ids(pred_dict: dict) -> set[str]:
+    docs = pred_dict.get("documents", [])
 
-
-def doc_id_set(file_obj: dict) -> set[str]:
-    docs = file_obj.get("documents", []) or []
-    out = set()
+    ids = set()
     for d in docs:
-        if isinstance(d, dict) and isinstance(d.get("doc_id"), str):
-            out.add(d["doc_id"])
-    return out
+        if isinstance(d, dict):
+            ids.add(d.get("doc_id"))
+
+    return ids
 
 
 def print_document_mismatch(gt: dict, pred: dict) -> None:
-    gt_docs = doc_id_set(gt)
-    pred_docs = doc_id_set(pred)
+    gt_docs = get_doc_ids(gt)
+    pred_docs = get_doc_ids(pred)
 
     only_gt = sorted(gt_docs - pred_docs)
     only_pred = sorted(pred_docs - gt_docs)
 
     if not only_gt and not only_pred:
         print("[OK] documents are consistent: same doc_id set in GT and predictions.")
-        return
 
     if only_gt:
         print(
-            f"[WARN] doc_id present in GT but missing in predictions ({len(only_gt)}):"
+            f"[WARN] doc_ids present in GT but missing in predictions ({len(only_gt)}):"
         )
         for x in only_gt:
             print(f"  - {x}")
 
     if only_pred:
         print(
-            f"[WARN] doc_id present in predictions but missing in GT ({len(only_pred)}):"
+            f"[WARN] doc_ids present in predictions but missing in GT ({len(only_pred)}):"
         )
         for x in only_pred:
             print(f"  - {x}")
@@ -261,8 +257,9 @@ def evaluate(
     gt = load_json(gt_json_path)
     pred = load_json(pred_json_path)
 
-    # minimal check requested
+    # Files validation
     print_document_mismatch(gt, pred)
+    # TODO: Keep common/intersecting files only for fair evaluation if files are missing.
 
     label_map = gt.get("label_map") or pred.get("label_map") or {}
     labels = supported_labels_from_label_map(label_map)
