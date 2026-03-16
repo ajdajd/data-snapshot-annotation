@@ -258,10 +258,12 @@ def evaluate(
     all_keys = set(gt_pages.keys()) | set(pred_pages.keys())
 
     # Prepare report dict
+    schema_version = gt.get("info").get("schema_version")
     label_map = gt.get("label_map")
+    label_map = {k: v for k, v in label_map.items() if v in labels}
     report: Dict[str, Any] = {
         "info": {
-            "schema_version": (pred.get("info", {}) or {}).get("schema_version", "1.3"),
+            "schema_version": schema_version,
             "gt_path": str(gt_json_path.resolve().relative_to(ROOT)),
             "pred_path": str(pred_json_path.resolve().relative_to(ROOT)),
         },
@@ -270,7 +272,6 @@ def evaluate(
         "metrics": {},
     }
 
-    print(labels)
     for thr in iou_thresholds:
         per_class: Dict[str, Stats] = {lab: Stats() for lab in labels}
         micro = Stats()
