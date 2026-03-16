@@ -70,6 +70,7 @@ def area_precision(
 
 @dataclass(frozen=True)
 class DetObj:
+    page_id: str
     obj_id: str
     label: str
     bbox: Tuple[float, float, float, float]
@@ -86,13 +87,18 @@ def prepare_prediction_objects(
     for p in preds:
         if p.get("doc_id") in filter_list:
             continue
+        page_id = p.get("page_id")
         for o in p.get("objects", []):
             label = o.get("label")
             obj_id = str(o.get("id", ""))
             bb = sanitize_bbox(o.get("bbox"))
             score = o.get("score", None)
 
-            objs.append(DetObj(obj_id=obj_id, label=label, bbox=bb, score=score))
+            objs.append(
+                DetObj(
+                    page_id=page_id, obj_id=obj_id, label=label, bbox=bb, score=score
+                )
+            )
 
     return objs
 
@@ -233,6 +239,9 @@ def evaluate(
     only_gt, only_pred = get_document_mismatch(gt, pred)
     gt_objects = prepare_prediction_objects(gt)
     pred_objects = prepare_prediction_objects(pred)
+    page_ids = sorted(
+        set([x.page_id for x in gt_objects]) | set([x.page_id for x in pred_objects])
+    )
 
     # Prepare report dict
     schema_version = gt.get("info").get("schema_version")
@@ -256,23 +265,26 @@ def evaluate(
         per_class: Dict[str, Stats] = {lab: Stats() for lab in labels}
         micro = Stats()
 
-        for lab in labels:
-            gt_lab = [o for o in gt_objects if o.label == lab]
-            pred_lab = [o for o in pred_objects if o.label == lab]
+        for p in page_ids:
+            for lab in labels:
+                gt_lab = [o for o in gt_objects if o.label == lab and o.page_id == p]
+                pred_lab = [
+                    o for o in pred_objects if o.label == lab and o.page_id == p
+                ]
 
-            matches, unmatched_p, unmatched_g = greedy_match(gt_lab, pred_lab, thr)
+                matches, unmatched_p, unmatched_g = greedy_match(gt_lab, pred_lab, thr)
 
-            st = per_class[lab]
-            for pi, gi, _v in matches:
-                pred_box = pred_lab[pi].bbox
-                gt_box = gt_lab[gi].bbox
-                st.add_match(pred_box, gt_box)
-                micro.add_match(pred_box, gt_box)
+                st = per_class[lab]
+                for pi, gi, _v in matches:
+                    pred_box = pred_lab[pi].bbox
+                    gt_box = gt_lab[gi].bbox
+                    st.add_match(pred_box, gt_box)
+                    micro.add_match(pred_box, gt_box)
 
-            st.add_fp(len(unmatched_p))
-            st.add_fn(len(unmatched_g))
-            micro.add_fp(len(unmatched_p))
-            micro.add_fn(len(unmatched_g))
+                st.add_fp(len(unmatched_p))
+                st.add_fn(len(unmatched_g))
+                micro.add_fp(len(unmatched_p))
+                micro.add_fn(len(unmatched_g))
 
         report["metrics"][str(thr)] = {
             "micro": {
