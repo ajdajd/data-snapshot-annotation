@@ -12,6 +12,10 @@
     0.5,
     0.75
   ],
+  "documents_mismatch": {
+    "only_gt": [],
+    "only_pred": []
+  },
   "metrics": {
     "0.5": {
       "micro": {
