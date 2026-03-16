@@ -5,7 +5,7 @@ import json
 import math
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Union, Tuple
 
 from dsa.constants import (
     ROOT,
@@ -76,43 +76,24 @@ class DetObj:
     score: Optional[float] = None
 
 
-# TODO: Deprecate this; pred files MUST follow page_id naming convention
-def index_pages(predictions: List[dict]) -> Dict[Tuple[str, int], List[dict]]:
-    """
-    Index by (doc_id, page_index). We don't rely on page_id so minor format drift won't break eval.
-    """
-    out: Dict[Tuple[str, int], List[dict]] = {}
-    for p in predictions or []:
-        doc_id = p.get("doc_id")
-        page_index = p.get("page_index")
-        if isinstance(doc_id, str) and isinstance(page_index, int):
-            out.setdefault((doc_id, page_index), []).append(p)
-    return out
-
-
-def extract_objects(
-    page_entries: List[dict], supported: set[str], expect_score: bool
+def prepare_prediction_objects(
+    pred_dict: List[dict], filter_list: List = list()
 ) -> List[DetObj]:
-    """
-    Merge objects across duplicate page containers (if any), and filter unsupported labels.
-    """
+    """Extract prediction objects."""
+    preds = pred_dict.get("predictions", [])
     objs: List[DetObj] = []
-    for pe in page_entries or []:
-        for o in pe.get("objects", []) or []:
+
+    for p in preds:
+        if p.get("doc_id") in filter_list:
+            continue
+        for o in p.get("objects", []):
             label = o.get("label")
-            if not isinstance(label, str) or label not in supported:
-                continue
             obj_id = str(o.get("id", ""))
             bb = sanitize_bbox(o.get("bbox"))
-            if expect_score:
-                sc = o.get("score", None)
-                if sc is None:
-                    continue
-                objs.append(
-                    DetObj(obj_id=obj_id, label=label, bbox=bb, score=float(sc))
-                )
-            else:
-                objs.append(DetObj(obj_id=obj_id, label=label, bbox=bb, score=None))
+            score = o.get("score", None)
+
+            objs.append(DetObj(obj_id=obj_id, label=label, bbox=bb, score=score))
+
     return objs
 
 
@@ -204,7 +185,7 @@ def get_doc_ids(pred_dict: dict) -> set[str]:
     return ids
 
 
-def print_document_mismatch(gt: dict, pred: dict) -> None:
+def get_document_mismatch(gt: dict, pred: dict) -> Tuple[List[str], List[str]]:
     gt_docs = get_doc_ids(gt)
     pred_docs = get_doc_ids(pred)
 
@@ -213,20 +194,20 @@ def print_document_mismatch(gt: dict, pred: dict) -> None:
 
     if not only_gt and not only_pred:
         print("[OK] documents are consistent: same doc_id set in GT and predictions.")
-
     if only_gt:
         print(
             f"[WARN] doc_ids present in GT but missing in predictions ({len(only_gt)}):"
         )
         for x in only_gt:
             print(f"  - {x}")
-
     if only_pred:
         print(
             f"[WARN] doc_ids present in predictions but missing in GT ({len(only_pred)}):"
         )
         for x in only_pred:
             print(f"  - {x}")
+
+    return only_gt, only_pred
 
 
 # -----------------------------
@@ -248,13 +229,10 @@ def evaluate(
     gt = load_json(gt_json_path)
     pred = load_json(pred_json_path)
 
-    # Files validation
-    print_document_mismatch(gt, pred)
-    # TODO: Keep common/intersecting files only for fair evaluation if files are missing.
-
-    gt_pages = index_pages(gt.get("predictions", []) or [])
-    pred_pages = index_pages(pred.get("predictions", []) or [])
-    all_keys = set(gt_pages.keys()) | set(pred_pages.keys())
+    # Prepare files
+    only_gt, only_pred = get_document_mismatch(gt, pred)
+    gt_objects = prepare_prediction_objects(gt)
+    pred_objects = prepare_prediction_objects(pred)
 
     # Prepare report dict
     schema_version = gt.get("info").get("schema_version")
@@ -268,6 +246,7 @@ def evaluate(
         },
         "label_map": label_map,
         "thresholds": list(iou_thresholds),
+        # TODO: Add document mismatch list
         "metrics": {},
     }
 
@@ -276,31 +255,23 @@ def evaluate(
         per_class: Dict[str, Stats] = {lab: Stats() for lab in labels}
         micro = Stats()
 
-        for key in sorted(all_keys):
-            gt_objs_all = extract_objects(
-                gt_pages.get(key, []), labels, expect_score=False
-            )
-            pred_objs_all = extract_objects(
-                pred_pages.get(key, []), labels, expect_score=True
-            )
+        for lab in labels:
+            gt_lab = [o for o in gt_objects if o.label == lab]
+            pred_lab = [o for o in pred_objects if o.label == lab]
 
-            for lab in labels:
-                gt_lab = [o for o in gt_objs_all if o.label == lab]
-                pred_lab = [o for o in pred_objs_all if o.label == lab]
+            matches, unmatched_p, unmatched_g = greedy_match(gt_lab, pred_lab, thr)
 
-                matches, unmatched_p, unmatched_g = greedy_match(gt_lab, pred_lab, thr)
+            st = per_class[lab]
+            for pi, gi, _v in matches:
+                pred_box = pred_lab[pi].bbox
+                gt_box = gt_lab[gi].bbox
+                st.add_match(pred_box, gt_box)
+                micro.add_match(pred_box, gt_box)
 
-                st = per_class[lab]
-                for pi, gi, _v in matches:
-                    pred_box = pred_lab[pi].bbox
-                    gt_box = gt_lab[gi].bbox
-                    st.add_match(pred_box, gt_box)
-                    micro.add_match(pred_box, gt_box)
-
-                st.add_fp(len(unmatched_p))
-                st.add_fn(len(unmatched_g))
-                micro.add_fp(len(unmatched_p))
-                micro.add_fn(len(unmatched_g))
+            st.add_fp(len(unmatched_p))
+            st.add_fn(len(unmatched_g))
+            micro.add_fp(len(unmatched_p))
+            micro.add_fn(len(unmatched_g))
 
         report["metrics"][str(thr)] = {
             "micro": {
