@@ -18,20 +18,37 @@ from dsa.constants import (
 from dsa.utils import load_json
 
 
-def _group_pages_by_doc(pages):
-    """
-    Returns:
-        {doc_id: {page_index: page_entry}}
+def _group_pages_by_doc(predictions):
+    """Generate dictionary of doc_ids, page indices, and predictions.
+
+    This function converts the list of predictions into the following format: `{doc_id: {page_index: page_entry}}`
+
+    Parameters
+    ----------
+    predictions : list of dict
+        List of predictions
+
+    Returns
+    -------
+    dict
     """
     out = {}
-    for p in pages:
-        out.setdefault(p["doc_id"], {})[p["page_index"]] = p
+    for page in predictions:
+        out.setdefault(page["doc_id"], {})[page["page_index"]] = page
     return out
 
 
 def convert_pdf_to_opencv_images(pdf_path):
-    """
-    Convert PDF to list of OpenCV BGR images.
+    """Convert PDF to a list of OpenCV BGR images.
+
+    Parameters
+    ----------
+    pdf_path : str or Path
+        Path to PDF file
+
+    Returns
+    -------
+    List of ndarray objects
     """
     pil_pages = convert_from_path(pdf_path)
     images = []
@@ -44,8 +61,23 @@ def convert_pdf_to_opencv_images(pdf_path):
 
 
 def draw_objects(img, objects, color, source):
-    """
-    Draw bounding boxes on image using normalized coords.
+    """Draw bounding boxes on image using normalized coords.
+
+    Parameters
+    ----------
+    img : ndarray
+        OpenCV BGR image
+    objects : list of dict
+        List of bounding boxes
+    color : tuple of int
+        Bounding box color in BGR
+    source : str
+        Source to append to the bounding box label (e.g., "GT" or "Prediction")
+
+    Returns
+    -------
+    ndarray
+        OpenCV BGR image
     """
     H, W = img.shape[:2]
 
@@ -80,19 +112,29 @@ def draw_objects(img, objects, color, source):
 
 
 def visualize_snapshots(
-    ground_truth_json: str,
-    prediction_json: str,
-    pdf_input: str,
+    gt_json_path: str,
+    pred_json_path: str,
+    pdf_input_dir: str,
     output_dir: str,
 ):
-    """
-    Render visualization PNGs with GT (green) and predictions (red).
+    """Render visualization PNGs.
 
     Output filename:
-        {filename.pdf}_page_XXX.png
+        `{filename.pdf}_page_XXX.png`
+
+    Parameters
+    ----------
+    gt_json_path : str or path
+        Path to ground truth json file
+    pred_json_path : str or path
+        Path to prediction json file
+    pdf_input_dir : str or path
+        Path to directory of PDF files
+    output_dir : str or path
+        Path to save annotated pages
     """
-    gt = load_json(ground_truth_json)
-    pr = load_json(prediction_json)
+    gt = load_json(gt_json_path)
+    pr = load_json(pred_json_path)
 
     gt_pages = _group_pages_by_doc(gt["predictions"])
     pr_pages = _group_pages_by_doc(pr["predictions"])
@@ -102,7 +144,7 @@ def visualize_snapshots(
     for doc in tqdm(gt["documents"]):
         doc_id = doc["doc_id"]
         doc_name = doc["doc_name"]
-        pdf_path = Path(pdf_input) / doc_name
+        pdf_path = Path(pdf_input_dir) / doc_name
 
         if not pdf_path.exists():
             print(f"[WARN] Missing PDF: {pdf_path}")
@@ -153,7 +195,7 @@ if __name__ == "__main__":
         default=VP_PRED_JSON_PATH,
     )
     ap.add_argument(
-        "--pdfs_dir",
+        "--pdf_input_dir",
         default=PDF_INPUT_DIR,
         help="Path to directory of PDF files",
     )
@@ -165,9 +207,9 @@ if __name__ == "__main__":
     args = ap.parse_args()
 
     visualize_snapshots(
-        ground_truth_json=args.gt_json_path,
-        prediction_json=args.pred_json_path,
-        pdf_input=args.pdfs_dir,
+        gt_json_path=args.gt_json_path,
+        pred_json_path=args.pred_json_path,
+        pdf_input_dir=args.pdf_input_dir,
         output_dir=args.output_dir,
     )
 
