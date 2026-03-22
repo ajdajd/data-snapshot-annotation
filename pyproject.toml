@@ -21,6 +21,10 @@ evaluation = [
     "transformers==4.46.0",
     "torch==2.9.1",
 ]
+doclayout_yolo = [
+    "doclayout-yolo",
+    "huggingface-hub",
+]
 dev = [
     "data-snapshot-annotation[evaluation]",
     "pytest==9.0.2",
