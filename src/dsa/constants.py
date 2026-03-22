@@ -1,5 +1,13 @@
+"""
+Project-wide constants and path configurations
+
+This module provides a centralized location for directory paths, file paths,
+evaluation thresholds, and other settings used throughout the project.
+"""
+
 from pathlib import Path
 
+# Base project directory
 ROOT = Path(__file__).parent.parent.parent
 PDF_INPUT_DIR = ROOT / "pdf_input"
 
