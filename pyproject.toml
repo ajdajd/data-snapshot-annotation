@@ -28,6 +28,7 @@ doclayout_yolo = [
 dev = [
     "data-snapshot-annotation[tfid,doclayout_yolo]",
     "pytest==9.0.2",
+    "black==25.1.0",
 ]
 
 
