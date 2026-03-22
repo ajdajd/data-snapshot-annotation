@@ -82,10 +82,6 @@ def _coerce_label(raw: Any) -> Optional[str]:
     s_low = s.lower()
     if s_low in _LABEL_NORMALIZATION:
         return _LABEL_NORMALIZATION[s_low]
-    # Handle "Figure 1", "Table:", etc.
-    for k, v in _LABEL_NORMALIZATION.items():
-        if s_low.startswith(k):
-            return v
     return None
 
 
