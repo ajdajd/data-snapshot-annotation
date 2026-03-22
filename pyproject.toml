@@ -17,7 +17,7 @@ dependencies = [
 
 
 [project.optional-dependencies]
-evaluation = [
+tfid = [
     "transformers==4.46.0",
     "torch==2.9.1",
 ]
@@ -26,7 +26,7 @@ doclayout_yolo = [
     "huggingface-hub",
 ]
 dev = [
-    "data-snapshot-annotation[evaluation]",
+    "data-snapshot-annotation[tfid,doclayout_yolo]",
     "pytest==9.0.2",
 ]
 
