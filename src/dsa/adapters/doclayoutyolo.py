@@ -38,52 +38,6 @@ OUTPUT_JSON_PATH = ROOT / "data/evaluation_input/doclayout-yolo.json"
 
 
 # ----------------------------
-# Model loading (with HF cache)
-# ----------------------------
-
-
-def _resolve_model_path(model_path: Union[str, Path]) -> Path:
-    """
-    Accept either:
-      - A local path to a .pt file (returned as-is if it exists).
-      - A HuggingFace repo ID (e.g. "juliozhao/DocLayout-YOLO-DocStructBench"),
-        which is downloaded and cached via huggingface_hub.hf_hub_download.
-    """
-    p = Path(model_path)
-    if p.exists():
-        return p
-
-    # Treat as a HuggingFace repo ID
-    try:
-        from huggingface_hub import hf_hub_download  # type: ignore[import-untyped]
-    except ImportError as exc:
-        raise ImportError(
-            "huggingface_hub is required to download models from HuggingFace. "
-            "Install it with:  pip install huggingface-hub"
-        ) from exc
-
-    repo_id = str(model_path)
-    cached = hf_hub_download(repo_id=repo_id, filename=MODEL_FILENAME)
-    return Path(cached)
-
-
-# def _load_model(model_path: Union[str, Path]):
-#     """Load a YOLOv10 model from doclayout_yolo (lazy import)."""
-#     try:
-#         from doclayout_yolo import YOLOv10  # type: ignore[import-untyped]
-#     except ImportError as exc:
-#         raise ImportError(
-#             "doclayout-yolo is required.  Install it with:\n"
-#             "  pip install doclayout-yolo\n"
-#             "or add it to your optional deps:\n"
-#             "  pip install 'data-snapshot-annotation[doclayout_yolo]'"
-#         ) from exc
-
-#     resolved = _resolve_model_path(model_path)
-#     return YOLOv10(str(resolved))
-
-
-# ----------------------------
 # Schema helpers
 # ----------------------------
 
@@ -201,7 +155,6 @@ def run_doclayout_yolo_adapter_directory(
     output_json_path.parent.mkdir(parents=True, exist_ok=True)
 
     cfg = config or DocLayoutYOLOAdapterConfig()
-    # model = _load_model(cfg.model_path)
     model = YOLOv10(cfg.model_path)
 
     pdf_files = sorted(input_pdf_dir.rglob("*.pdf"))
@@ -244,10 +197,10 @@ def run_doclayout_yolo_adapter_directory(
             result = det_res[0]
 
             # Extract boxes, scores, class indices from the Results object.
-            boxes_tensor = result.boxes.xyxy.cpu().tolist()   # [[x1,y1,x2,y2], ...]
-            scores_list = result.boxes.conf.cpu().tolist()     # [float, ...]
-            cls_list = result.boxes.cls.cpu().tolist()         # [float, ...]
-            names: Dict[int, str] = result.names              # {0: "title", ...}
+            boxes_tensor = result.boxes.xyxy.cpu().tolist()  # [[x1,y1,x2,y2], ...]
+            scores_list = result.boxes.conf.cpu().tolist()  # [float, ...]
+            cls_list = result.boxes.cls.cpu().tolist()  # [float, ...]
+            names: Dict[int, str] = result.names  # {0: "title", ...}
 
             bboxes_norm = _normalize_bboxes_xyxy(
                 boxes_tensor, width=image.width, height=image.height
@@ -331,11 +284,15 @@ if __name__ == "__main__":
         description="Run DocLayout-YOLO over a PDF directory and produce a v1.3 prediction JSON."
     )
     parser.add_argument(
-        "--input_pdf_dir", type=str, default=str(INPUT_PDF_DIR),
+        "--input_pdf_dir",
+        type=str,
+        default=str(INPUT_PDF_DIR),
         help="Directory of PDF files to process.",
     )
     parser.add_argument(
-        "--output_json_path", type=str, default=str(OUTPUT_JSON_PATH),
+        "--output_json_path",
+        type=str,
+        default=str(OUTPUT_JSON_PATH),
         help="Destination path for the prediction JSON.",
     )
     parser.add_argument("--run_id", type=str, default=None)
