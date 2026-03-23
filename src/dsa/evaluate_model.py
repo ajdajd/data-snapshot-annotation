@@ -208,6 +208,50 @@ def get_document_mismatch(gt: dict, pred: dict) -> Tuple[List[str], List[str]]:
     return only_gt, only_pred
 
 
+def print_summary_metrics(output_report_path: Union[str, Path], iou_threshold: float) -> None:
+    """
+    Print summary metrics in a markdown table format.
+
+    Parameters
+    ----------
+    output_report_path : str | Path
+        Path to the evaluation report JSON.
+    iou_threshold : float
+        IoU threshold to extract metrics for.
+    """
+    report = load_json(output_report_path)
+    metrics = report.get("metrics", {}).get(str(iou_threshold))
+
+    if not metrics:
+        print(f"[WARN] No metrics found for IoU threshold {iou_threshold}")
+        return
+
+    print("\nSummary metrics")
+    per_class = metrics.get("per_class", {})
+
+    for lab in ["Figure", "Table"]:
+        class_metrics = per_class.get(lab)
+        if not class_metrics:
+            continue
+
+        print(f"### {lab} (IoU={iou_threshold})")
+        print("|     Category     |     Metric     | Score |")
+        print("|:----------------:|:--------------:|:-----:|")
+        print(
+            f"| Detection        | Precision      | {class_metrics['precision']:.3f} |"
+        )
+        print(f"|                  | Recall         | {class_metrics['recall']:.3f} |")
+        print(
+            f"| Spatial accuracy | IoU            | {class_metrics['mean_iou']:.3f} |"
+        )
+        print(
+            f"|                  | Area precision | {class_metrics['mean_area_precision']:.3f} |"
+        )
+        print(
+            f"|                  | Area recall    | {class_metrics['mean_area_recall']:.3f} |"
+        )
+
+
 def evaluate(
     gt_json_path: str | Path,
     pred_json_path: str | Path,
@@ -352,3 +396,4 @@ if __name__ == "__main__":
         output_path=args.output_report_path,
     )
     print(f"Done! Evaluations report saved at {args.output_report_path}")
+    print_summary_metrics(output_report_path=args.output_report_path, iou_threshold=0.5)
