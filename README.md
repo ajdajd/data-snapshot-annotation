@@ -78,7 +78,7 @@ python src/dsa/evaluate_model.py --gt_json_path=path/to/ground_truth.json --pred
 
 1. Install additional dependencies.
     ```shell
-    pip install -e .["evaluation"]
+    pip install -e .[dev]
     ```
 2. Generate ground truth file `ground_truth.json`.
     1. Open Label Studio and select the project.
@@ -89,6 +89,15 @@ python src/dsa/evaluate_model.py --gt_json_path=path/to/ground_truth.json --pred
 Supported models:
 - [yifeihu/TF-ID-large](https://huggingface.co/yifeihu/TF-ID-large)
   - Run `python src/dsa/adapters/tfid.py` to generate `data/evaluation_input/tfid-large.json`.
+- [juliozhao/DocLayout-YOLO-DocStructBench](https://huggingface.co/juliozhao/DocLayout-YOLO-DocStructBench)
+  - Run `python src/dsa/adapters/doclayoutyolo.py` to generate `data/evaluation_input/doclayout-yolo.json`.
+
+## Visualizing predictions
+To render annotated page images comparing ground truth and predictions:
+```shell
+pip install -e .[viz]
+python src/dsa/visualize_pages.py --gt_json_path=path/to/gt.json --pred_json_path=path/to/pred.json
+```
 
 # Troubleshooting
 
