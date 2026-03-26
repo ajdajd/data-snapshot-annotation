@@ -1,3 +1,11 @@
+"""
+Evaluation framework for layout detection models.
+
+Computes detection accuracy (precision, recall) and spatial accuracy
+(mean IoU, coverage, purity) by comparing prediction and ground-truth
+JSON files conforming to the Unified Evaluation Schema v1.3.
+"""
+
 from __future__ import annotations
 
 import argparse
@@ -5,7 +13,7 @@ import json
 import math
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union, Tuple
+from typing import Any
 
 from dsa.constants import (
     ROOT,
@@ -18,14 +26,40 @@ from dsa.constants import (
 from dsa.utils import load_json, sanitize_bbox
 
 
-def bbox_area(b: Tuple[float, float, float, float]) -> float:
+def bbox_area(b: tuple[float, float, float, float]) -> float:
+    """Compute the area of a bounding box.
+
+    Parameters
+    ----------
+    b : tuple[float, float, float, float]
+        Bounding box as ``(x1, y1, x2, y2)``.
+
+    Returns
+    -------
+    float
+        Area of the box (zero if degenerate).
+    """
     x1, y1, x2, y2 = b
     return max(0.0, x2 - x1) * max(0.0, y2 - y1)
 
 
 def bbox_intersection(
-    a: Tuple[float, float, float, float], b: Tuple[float, float, float, float]
+    a: tuple[float, float, float, float], b: tuple[float, float, float, float]
 ) -> float:
+    """Compute the intersection area of two bounding boxes.
+
+    Parameters
+    ----------
+    a : tuple[float, float, float, float]
+        First bounding box as ``(x1, y1, x2, y2)``.
+    b : tuple[float, float, float, float]
+        Second bounding box as ``(x1, y1, x2, y2)``.
+
+    Returns
+    -------
+    float
+        Intersection area (zero if no overlap).
+    """
     ax1, ay1, ax2, ay2 = a
     bx1, by1, bx2, by2 = b
     ix1 = max(ax1, bx1)
@@ -36,8 +70,22 @@ def bbox_intersection(
 
 
 def iou(
-    a: Tuple[float, float, float, float], b: Tuple[float, float, float, float]
+    a: tuple[float, float, float, float], b: tuple[float, float, float, float]
 ) -> float:
+    """Compute Intersection over Union (IoU) of two bounding boxes.
+
+    Parameters
+    ----------
+    a : tuple[float, float, float, float]
+        First bounding box as ``(x1, y1, x2, y2)``.
+    b : tuple[float, float, float, float]
+        Second bounding box as ``(x1, y1, x2, y2)``.
+
+    Returns
+    -------
+    float
+        IoU value in ``[0, 1]``.
+    """
     inter = bbox_intersection(a, b)
     if inter <= 0.0:
         return 0.0
@@ -46,18 +94,46 @@ def iou(
 
 
 def area_recall(
-    pred: Tuple[float, float, float, float], gt: Tuple[float, float, float, float]
+    pred: tuple[float, float, float, float],
+    gt: tuple[float, float, float, float],
 ) -> float:
-    """Intersection / GT area (coverage)."""
+    """Compute coverage: intersection divided by ground-truth area.
+
+    Parameters
+    ----------
+    pred : tuple[float, float, float, float]
+        Predicted bounding box.
+    gt : tuple[float, float, float, float]
+        Ground-truth bounding box.
+
+    Returns
+    -------
+    float
+        Coverage value in ``[0, 1]``.
+    """
     inter = bbox_intersection(pred, gt)
     g = bbox_area(gt)
     return inter / g if g > 0.0 else 0.0
 
 
 def area_precision(
-    pred: Tuple[float, float, float, float], gt: Tuple[float, float, float, float]
+    pred: tuple[float, float, float, float],
+    gt: tuple[float, float, float, float],
 ) -> float:
-    """Intersection / Pred area (purity)."""
+    """Compute purity: intersection divided by prediction area.
+
+    Parameters
+    ----------
+    pred : tuple[float, float, float, float]
+        Predicted bounding box.
+    gt : tuple[float, float, float, float]
+        Ground-truth bounding box.
+
+    Returns
+    -------
+    float
+        Purity value in ``[0, 1]``.
+    """
     inter = bbox_intersection(pred, gt)
     p = bbox_area(pred)
     return inter / p if p > 0.0 else 0.0
@@ -65,19 +141,51 @@ def area_precision(
 
 @dataclass(frozen=True)
 class DetObj:
+    """A single detected object (prediction or ground truth).
+
+    Parameters
+    ----------
+    page_id : str
+        Page identifier in ``"doc_id::pNNN"`` format.
+    obj_id : str
+        Unique object identifier.
+    label : str
+        Canonical label (``"Figure"`` or ``"Table"``).
+    bbox : tuple[float, float, float, float]
+        Normalized bounding box ``(x1, y1, x2, y2)``.
+    score : float | None
+        Confidence score (predictions only).
+    """
+
     page_id: str
     obj_id: str
     label: str
-    bbox: Tuple[float, float, float, float]
-    score: Optional[float] = None
+    bbox: tuple[float, float, float, float]
+    score: float | None = None
 
 
 def prepare_prediction_objects(
-    pred_dict: List[dict], filter_list: List = list()
-) -> List[DetObj]:
-    """Extract prediction objects."""
+    pred_dict: dict, filter_list: list[str] | None = None
+) -> list[DetObj]:
+    """Extract detection objects from a schema-compliant JSON dict.
+
+    Parameters
+    ----------
+    pred_dict : dict
+        Parsed JSON conforming to the Unified Evaluation Schema v1.3.
+    filter_list : list[str] | None
+        Document IDs to exclude.  ``None`` means no filtering.
+
+    Returns
+    -------
+    list[DetObj]
+        Flat list of detection objects across all pages.
+    """
+    if filter_list is None:
+        filter_list = []
+
     preds = pred_dict.get("predictions", [])
-    objs: List[DetObj] = []
+    objs: list[DetObj] = []
 
     for p in preds:
         if p.get("doc_id") in filter_list:
@@ -91,7 +199,11 @@ def prepare_prediction_objects(
 
             objs.append(
                 DetObj(
-                    page_id=page_id, obj_id=obj_id, label=label, bbox=bb, score=score
+                    page_id=page_id,
+                    obj_id=obj_id,
+                    label=label,
+                    bbox=bb,
+                    score=score,
                 )
             )
 
@@ -100,6 +212,13 @@ def prepare_prediction_objects(
 
 @dataclass
 class Stats:
+    """Accumulator for detection and spatial accuracy metrics.
+
+    Tracks true positives, false positives, false negatives, and
+    running sums of spatial metrics (IoU, coverage, purity) for
+    matched prediction–ground-truth pairs.
+    """
+
     tp: int = 0
     fp: int = 0
     fn: int = 0
@@ -108,7 +227,20 @@ class Stats:
     area_recall_sum: float = 0.0
     area_precision_sum: float = 0.0
 
-    def add_match(self, pred_box, gt_box) -> None:
+    def add_match(
+        self,
+        pred_box: tuple[float, float, float, float],
+        gt_box: tuple[float, float, float, float],
+    ) -> None:
+        """Record a matched prediction–ground-truth pair.
+
+        Parameters
+        ----------
+        pred_box : tuple[float, float, float, float]
+            Predicted bounding box.
+        gt_box : tuple[float, float, float, float]
+            Ground-truth bounding box.
+        """
         self.tp += 1
         self.matched += 1
         self.iou_sum += iou(pred_box, gt_box)
@@ -116,50 +248,82 @@ class Stats:
         self.area_precision_sum += area_precision(pred_box, gt_box)
 
     def add_fp(self, n: int) -> None:
+        """Add *n* false positives.
+
+        Parameters
+        ----------
+        n : int
+            Number of false positives to add.
+        """
         self.fp += n
 
     def add_fn(self, n: int) -> None:
+        """Add *n* false negatives.
+
+        Parameters
+        ----------
+        n : int
+            Number of false negatives to add.
+        """
         self.fn += n
 
     def precision(self) -> float:
+        """Compute precision: ``TP / (TP + FP)``."""
         denom = self.tp + self.fp
         return self.tp / denom if denom > 0 else math.nan
 
     def recall(self) -> float:
+        """Compute recall: ``TP / (TP + FN)``."""
         denom = self.tp + self.fn
         return self.tp / denom if denom > 0 else math.nan
 
     def mean_iou(self) -> float:
+        """Compute mean IoU across matched pairs."""
         return self.iou_sum / self.matched if self.matched > 0 else math.nan
 
     def mean_area_recall(self) -> float:
+        """Compute mean coverage across matched pairs."""
         return self.area_recall_sum / self.matched if self.matched > 0 else math.nan
 
     def mean_area_precision(self) -> float:
+        """Compute mean purity across matched pairs."""
         return self.area_precision_sum / self.matched if self.matched > 0 else math.nan
 
 
 def greedy_match(
-    gt: List[DetObj], pred: List[DetObj], thr: float
-) -> Tuple[List[Tuple[int, int, float]], List[int], List[int]]:
+    gt: list[DetObj], pred: list[DetObj], thr: float
+) -> tuple[list[tuple[int, int, float]], list[int], list[int]]:
+    """Greedy one-to-one matching by IoU (descending).
+
+    Only pairs with ``IoU >= thr`` are considered.  Each ground-truth
+    and prediction object may be matched at most once.
+
+    Parameters
+    ----------
+    gt : list[DetObj]
+        Ground-truth objects for a single page and label.
+    pred : list[DetObj]
+        Predicted objects for a single page and label.
+    thr : float
+        Minimum IoU threshold for a valid match.
+
+    Returns
+    -------
+    tuple[list[tuple[int, int, float]], list[int], list[int]]
+        ``(matches, unmatched_pred_indices, unmatched_gt_indices)``
+        where each match is ``(pred_idx, gt_idx, iou_value)``.
     """
-    Greedy one-to-one matching by IoU descending, using only pairs with IoU >= thr.
-    Returns matches as (pred_idx, gt_idx, iou).
-    """
-    # Prepare list of pairs meeting minimum threshold
-    cand: List[Tuple[float, int, int]] = []
+    cand: list[tuple[int, int, float]] = []
     for p_idx, p in enumerate(pred):
         for g_idx, g in enumerate(gt):
             v = iou(p.bbox, g.bbox)
             if v >= thr:
                 cand.append((p_idx, g_idx, v))
 
-    # Sort descending
     cand.sort(reverse=True, key=lambda t: t[2])
 
-    # Traverse sorted list while removing matched items
     used_p, used_g = set(), set()
-    matches: List[Tuple[int, int, float]] = []
+    matches: list[tuple[int, int, float]] = []
     for p_idx, g_idx, v in cand:
         if p_idx in used_p or g_idx in used_g:
             continue
@@ -173,6 +337,18 @@ def greedy_match(
 
 
 def get_doc_ids(pred_dict: dict) -> set[str]:
+    """Extract document IDs from a schema-compliant JSON dict.
+
+    Parameters
+    ----------
+    pred_dict : dict
+        Parsed JSON conforming to the Unified Evaluation Schema v1.3.
+
+    Returns
+    -------
+    set[str]
+        Set of ``doc_id`` values.
+    """
     docs = pred_dict.get("documents", [])
 
     ids = set()
@@ -183,7 +359,24 @@ def get_doc_ids(pred_dict: dict) -> set[str]:
     return ids
 
 
-def get_document_mismatch(gt: dict, pred: dict) -> Tuple[List[str], List[str]]:
+def get_document_mismatch(gt: dict, pred: dict) -> tuple[list[str], list[str]]:
+    """Compare document IDs between ground truth and predictions.
+
+    Prints warnings for any mismatches and returns the differences.
+
+    Parameters
+    ----------
+    gt : dict
+        Ground-truth JSON dict.
+    pred : dict
+        Prediction JSON dict.
+
+    Returns
+    -------
+    tuple[list[str], list[str]]
+        ``(only_in_gt, only_in_pred)`` — document IDs present in one
+        file but not the other.
+    """
     gt_docs = get_doc_ids(gt)
     pred_docs = get_doc_ids(pred)
 
@@ -208,9 +401,8 @@ def get_document_mismatch(gt: dict, pred: dict) -> Tuple[List[str], List[str]]:
     return only_gt, only_pred
 
 
-def print_summary_metrics(output_report_path: Union[str, Path], iou_threshold: float) -> None:
-    """
-    Print summary metrics in a markdown table format.
+def print_summary_metrics(output_report_path: str | Path, iou_threshold: float) -> None:
+    """Print summary metrics in a markdown table format.
 
     Parameters
     ----------
@@ -256,10 +448,34 @@ def evaluate(
     gt_json_path: str | Path,
     pred_json_path: str | Path,
     *,
-    iou_thresholds: Tuple[float, ...] = (0.5, 0.75),
-    labels: Tuple[str, ...] = ("Figure", "Table"),
-    output_path: Optional[str | Path] = None,
-) -> Dict[str, Any]:
+    iou_thresholds: tuple[float, ...] = (0.5, 0.75),
+    labels: tuple[str, ...] = ("Figure", "Table"),
+    output_path: str | Path | None = None,
+) -> dict[str, Any]:
+    """Run evaluation comparing ground truth and predictions.
+
+    Computes detection metrics (precision, recall) and spatial accuracy
+    metrics (mean IoU, coverage, purity) at each IoU threshold, per
+    class and micro-averaged.
+
+    Parameters
+    ----------
+    gt_json_path : str | Path
+        Path to the ground-truth JSON file.
+    pred_json_path : str | Path
+        Path to the prediction JSON file.
+    iou_thresholds : tuple[float, ...]
+        IoU thresholds at which to evaluate.
+    labels : tuple[str, ...]
+        Object classes to evaluate.
+    output_path : str | Path | None
+        If provided, the evaluation report is written to this path.
+
+    Returns
+    -------
+    dict[str, Any]
+        Complete evaluation report dictionary.
+    """
     # Load files
     gt_json_path = Path(gt_json_path)
     pred_json_path = Path(pred_json_path)
@@ -279,7 +495,7 @@ def evaluate(
     label_map = gt.get("label_map")
     label_map = {k: v for k, v in label_map.items() if v in labels}
     doc_mismatch = {"only_gt": only_gt, "only_pred": only_pred}
-    report: Dict[str, Any] = {
+    report: dict[str, Any] = {
         "info": {
             "schema_version": schema_version,
             "gt_path": str(gt_json_path.resolve().relative_to(ROOT)),
@@ -293,7 +509,7 @@ def evaluate(
 
     # Calculate metrics
     for thr in iou_thresholds:
-        per_class: Dict[str, Stats] = {lab: Stats() for lab in labels}
+        per_class: dict[str, Stats] = {lab: Stats() for lab in labels}
         micro = Stats()
 
         for p in page_ids:
@@ -356,7 +572,9 @@ def evaluate(
 
 
 if __name__ == "__main__":
-    ap = argparse.ArgumentParser()
+    ap = argparse.ArgumentParser(
+        description="Evaluate a layout detection model against ground truth."
+    )
     ap.add_argument(
         "--gt_json_path",
         help="Path to ground truth json file",
