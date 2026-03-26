@@ -1,5 +1,5 @@
 """
-DocLayout-YOLO adapter -> Unified Evaluation Schema v1.3
+DocLayout-YOLO adapter -> Unified Evaluation Schema v1.3.
 
 - Input: directory of PDFs
 - Output: single JSON file matching data-snapshot-eval-v1.3.schema.json
@@ -7,27 +7,21 @@ DocLayout-YOLO adapter -> Unified Evaluation Schema v1.3
 Model: DocLayout-YOLO fine-tuned on DocStructBench
   - Local  : data/models/doclayout_yolo_docstructbench_imgsz1024.pt
   - Remote : juliozhao/DocLayout-YOLO-DocStructBench  (HuggingFace repo ID)
-             -> cached via huggingface_hub.hf_hub_download on first use
 """
 
 from __future__ import annotations
 
 import json
 import uuid
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Sequence, Union
+from typing import Any
 
+from doclayout_yolo import YOLOv10
 from pdf2image import convert_from_path
 from tqdm.auto import tqdm
-from doclayout_yolo import YOLOv10
 
-from dsa.constants import ROOT
-
-# ----------------------------
-# Paths / defaults
-# ----------------------------
+from dsa.constants import LABEL_MAP, ROOT
+from dsa.utils import normalize_bboxes_xyxy, utc_now_iso
 
 MODEL_NAME = "juliozhao/DocLayout-YOLO-DocStructBench"
 MODEL_FILENAME = "doclayout_yolo_docstructbench_imgsz1024.pt"
@@ -36,19 +30,9 @@ MODEL_PATH_DEFAULT = ROOT / "data" / "models" / MODEL_FILENAME
 INPUT_PDF_DIR = ROOT / "pdf_input"
 OUTPUT_JSON_PATH = ROOT / "data/evaluation_input/doclayout-yolo.json"
 
-
-# ----------------------------
-# Schema helpers
-# ----------------------------
-
-LABEL_MAP: Dict[str, str] = {
-    "1": "Figure",
-    "2": "Table",
-}
-
 # DocLayout-YOLO / DocStructBench class names that map to our canonical labels.
 # All other classes (title, text, caption, formula, …) are ignored.
-_LABEL_NORMALIZATION: Dict[str, str] = {
+_LABEL_NORMALIZATION: dict[str, str] = {
     "figure": "Figure",
     "fig": "Figure",
     "image": "Figure",
@@ -57,21 +41,23 @@ _LABEL_NORMALIZATION: Dict[str, str] = {
     "table": "Table",
     "tbl": "Table",
 }
-
 _ALLOWED_LABELS = set(LABEL_MAP.values())
 
 
-def _utc_now_iso() -> str:
-    return (
-        datetime.now(timezone.utc)
-        .replace(microsecond=0)
-        .isoformat()
-        .replace("+00:00", "Z")
-    )
+def _coerce_label(raw: Any) -> str | None:
+    """Map a raw YOLO class name to a canonical label.
 
+    Parameters
+    ----------
+    raw : Any
+        Raw class name produced by the model (e.g. ``"figure"``, ``"table"``).
 
-def _coerce_label(raw: Any) -> Optional[str]:
-    """Map a raw YOLO class name to a canonical label, or None to skip."""
+    Returns
+    -------
+    str | None
+        ``"Figure"`` or ``"Table"`` if recognized, ``None`` otherwise.
+        Returning ``None`` causes the detection to be silently skipped.
+    """
     if raw is None:
         return None
     s = str(raw).strip()
@@ -85,72 +71,81 @@ def _coerce_label(raw: Any) -> Optional[str]:
     return None
 
 
-def _clip01(x: float) -> float:
-    return 0.0 if x < 0.0 else 1.0 if x > 1.0 else x
+class DocLayoutYOLOConfig:
+    """Configuration for the DocLayout-YOLO adapter.
 
-
-def _normalize_bboxes_xyxy(
-    bboxes: Sequence[Sequence[float]], width: int, height: int
-) -> List[List[float]]:
+    Parameters
+    ----------
+    model_path : str | Path
+        Path to the YOLO ``.pt`` weights file, or a HuggingFace repo ID.
+    device : str
+        Torch device string (e.g. ``"cpu"``, ``"cuda:0"``).
+    dpi : int
+        Resolution for PDF-to-image rendering.
+    conf : float
+        Minimum confidence threshold for detections.
+    imgsz : int
+        Input image size passed to the YOLO model.
+    store_doc_path_as : str
+        How to record document paths: ``"relative"`` or ``"absolute"``.
     """
-    Convert absolute-pixel xyxy bboxes to normalized [0, 1] xyxy.
-    Already-normalized coords are clipped and returned as-is.
-    Degenerate boxes (zero area) are dropped.
-    """
-    out: List[List[float]] = []
-    for bb in bboxes:
-        if len(bb) != 4:
-            continue
-        x1, y1, x2, y2 = (float(v) for v in bb)
 
-        # Heuristic: if any coord > 1.5, assume absolute pixels.
-        if max(abs(x1), abs(y1), abs(x2), abs(y2)) > 1.5:
-            x1, x2 = x1 / float(width), x2 / float(width)
-            y1, y2 = y1 / float(height), y2 / float(height)
-
-        nx1, nx2 = sorted([_clip01(x1), _clip01(x2)])
-        ny1, ny2 = sorted([_clip01(y1), _clip01(y2)])
-
-        if nx2 <= nx1 or ny2 <= ny1:
-            continue  # degenerate
-
-        out.append([nx1, ny1, nx2, ny2])
-    return out
-
-
-# ----------------------------
-# Main adapter
-# ----------------------------
-
-
-@dataclass
-class DocLayoutYOLOAdapterConfig:
-    model_path: Union[str, Path] = field(default_factory=lambda: MODEL_PATH_DEFAULT)
-    device: str = "cpu"
-    dpi: int = 300
-    conf: float = 0.2
-    imgsz: int = 1024
-    store_doc_path_as: str = "relative"  # "relative" or "absolute"
+    def __init__(
+        self,
+        model_path: str | Path = MODEL_PATH_DEFAULT,
+        device: str = "cpu",
+        dpi: int = 300,
+        conf: float = 0.2,
+        imgsz: int = 1024,
+        store_doc_path_as: str = "relative",
+    ) -> None:
+        self.model_path = model_path
+        self.device = device
+        self.dpi = dpi
+        self.conf = conf
+        self.imgsz = imgsz
+        self.store_doc_path_as = store_doc_path_as
 
 
 def run_doclayout_yolo_adapter_directory(
-    input_pdf_dir: Union[str, Path],
-    output_json_path: Union[str, Path],
+    input_pdf_dir: str | Path,
+    output_json_path: str | Path,
     *,
-    run_id: Optional[str] = None,
-    config: Optional[DocLayoutYOLOAdapterConfig] = None,
+    run_id: str | None = None,
+    config: DocLayoutYOLOConfig | None = None,
 ) -> Path:
-    """
-    Run DocLayout-YOLO on all PDFs under *input_pdf_dir* and write a single
-    Unified Evaluation Schema v1.3 prediction file to *output_json_path*.
+    """Run DocLayout-YOLO on every PDF in a directory and write predictions.
 
-    Returns the output path.
+    Produces a single Unified Evaluation Schema v1.3 JSON file containing
+    predictions for all pages across all PDFs.
+
+    Parameters
+    ----------
+    input_pdf_dir : str | Path
+        Directory containing PDF files (searched recursively).
+    output_json_path : str | Path
+        Destination path for the prediction JSON.
+    run_id : str | None
+        Optional identifier for this evaluation run. Auto-generated if not
+        provided.
+    config : DocLayoutYOLOConfig | None
+        Adapter configuration. Uses defaults when ``None``.
+
+    Returns
+    -------
+    Path
+        The path where the prediction JSON was written.
+
+    Raises
+    ------
+    FileNotFoundError
+        If no PDF files are found under *input_pdf_dir*.
     """
     input_pdf_dir = Path(input_pdf_dir)
     output_json_path = Path(output_json_path)
     output_json_path.parent.mkdir(parents=True, exist_ok=True)
 
-    cfg = config or DocLayoutYOLOAdapterConfig()
+    cfg = config or DocLayoutYOLOConfig()
     model = YOLOv10(cfg.model_path)
 
     pdf_files = sorted(input_pdf_dir.rglob("*.pdf"))
@@ -159,8 +154,8 @@ def run_doclayout_yolo_adapter_directory(
 
     run_id = run_id or f"doclayout-yolo-{uuid.uuid4().hex[:10]}"
 
-    documents: List[Dict[str, str]] = []
-    predictions: List[Dict[str, Any]] = []
+    documents: list[dict[str, str]] = []
+    predictions: list[dict[str, Any]] = []
 
     for pdf_path in tqdm(pdf_files, desc="Processing PDFs"):
         doc_id = pdf_path.name
@@ -193,17 +188,17 @@ def run_doclayout_yolo_adapter_directory(
             result = det_res[0]
 
             # Extract boxes, scores, class indices from the Results object.
-            boxes_tensor = result.boxes.xyxy.cpu().tolist()  # [[x1,y1,x2,y2], ...]
-            scores_list = result.boxes.conf.cpu().tolist()  # [float, ...]
-            cls_list = result.boxes.cls.cpu().tolist()  # [float, ...]
-            names: Dict[int, str] = result.names  # {0: "title", ...}
+            boxes_tensor = result.boxes.xyxy.cpu().tolist()
+            scores_list = result.boxes.conf.cpu().tolist()
+            cls_list = result.boxes.cls.cpu().tolist()
+            names: dict[int, str] = result.names
 
-            bboxes_norm = _normalize_bboxes_xyxy(
+            bboxes_norm = normalize_bboxes_xyxy(
                 boxes_tensor, width=image.width, height=image.height
             )
 
             page_id = f"{doc_id}::p{page_index:03d}"
-            objects: List[Dict[str, Any]] = []
+            objects: list[dict[str, Any]] = []
 
             for i, bbox in enumerate(bboxes_norm):
                 cls_idx = int(cls_list[i])
@@ -242,7 +237,7 @@ def run_doclayout_yolo_adapter_directory(
         "info": {
             "schema_version": "1.3",
             "type": "prediction",
-            "created_at": _utc_now_iso(),
+            "created_at": utc_now_iso(),
             "run_id": run_id,
             "model": {
                 "name": MODEL_NAME,
@@ -268,10 +263,6 @@ def run_doclayout_yolo_adapter_directory(
 
     return output_json_path
 
-
-# ----------------------------
-# CLI
-# ----------------------------
 
 if __name__ == "__main__":
     import argparse
@@ -320,7 +311,7 @@ if __name__ == "__main__":
     pdf_files = list(pdf_dir.rglob("*.pdf"))
     print(f"PDFs found    : {len(pdf_files)}")
 
-    cfg = DocLayoutYOLOAdapterConfig(
+    cfg = DocLayoutYOLOConfig(
         model_path=args.model_path,
         device=args.device,
         dpi=args.dpi,

@@ -1,5 +1,5 @@
 """
-Project-wide constants and path configurations
+Project-wide constants and path configurations.
 
 This module provides a centralized location for directory paths, file paths,
 evaluation thresholds, and other settings used throughout the project.
@@ -10,6 +10,12 @@ from pathlib import Path
 # Base project directory
 ROOT = Path(__file__).parent.parent.parent
 PDF_INPUT_DIR = ROOT / "pdf_input"
+
+# Canonical label map (Unified Evaluation Schema v1.3)
+LABEL_MAP: dict[str, str] = {
+    "1": "Figure",
+    "2": "Table",
+}
 
 # evaluate_model.py
 GT_JSON_PATH = ROOT / "data/evaluation_input/ground_truth.json"
