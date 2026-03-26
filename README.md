@@ -1,5 +1,6 @@
 # data-snapshot-annotation
-Label Studio for data-snapshot
+
+Label Studio and evaluation framework for data snapshot detection in PDF documents.
 
 # First time setup
 

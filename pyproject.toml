@@ -6,8 +6,8 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "data-snapshot-annotation"
 version = "0.1.0"
-description = "Label Studio for data-snapshot"
-requires-python = "==3.10.19"
+description = "Label Studio and evaluation framework for data snapshot detection in PDF documents"
+requires-python = ">=3.10,<3.11"
 readme = "README.md"
 
 dependencies = [
