@@ -1,3 +1,11 @@
+"""Visualization tool for comparing ground-truth and predicted bounding boxes.
+
+Renders annotated page images with color-coded bounding boxes for
+visual comparison of model predictions against ground truth.
+"""
+
+from __future__ import annotations
+
 import argparse
 import os
 from pathlib import Path
@@ -18,7 +26,9 @@ from dsa.constants import (
 from dsa.utils import load_json
 
 
-def _group_pages_by_doc(predictions):
+def _group_pages_by_doc(
+    predictions: list[dict],
+) -> dict[str, dict[int, dict]]:
     """Generate dictionary of doc_ids, page indices, and predictions.
 
     This function converts the list of predictions into the following format: `{doc_id: {page_index: page_entry}}`
@@ -38,7 +48,7 @@ def _group_pages_by_doc(predictions):
     return out
 
 
-def convert_pdf_to_opencv_images(pdf_path):
+def convert_pdf_to_opencv_images(pdf_path: str | Path) -> list[np.ndarray]:
     """Convert PDF to a list of OpenCV BGR images.
 
     Parameters
