@@ -11,6 +11,7 @@ from dsa.adapters.doclayoutyolo import (
     DocLayoutYOLOConfig,
     run_doclayout_yolo_adapter_directory,
 )
+from dsa.adapters.tfid import TFIDConfig, run_tfid_adapter_directory
 
 
 @pytest.mark.skip(reason="For debugging purposes only.")
@@ -39,6 +40,28 @@ def test_doclayoutyolo():
         input_pdf_dir=ROOT / "pdf_input",
         output_json_path=test_path,
         run_id=None,
+        config=cfg,
+    )
+
+    ref = load_json(ref_path)
+    del ref["info"]
+    test = load_json(test_path)
+    del test["info"]
+
+    assert json.dumps(ref) == json.dumps(test)
+
+    # Delete test file
+    test_path.unlink()
+
+
+def test_tfid():
+    ref_path = ROOT / "tests/data/tfid-large.json"
+    test_path = ROOT / "tests/data/tfid-large_test.json"
+
+    cfg = TFIDConfig()
+    run_tfid_adapter_directory(
+        ROOT / "pdf_input",
+        test_path,
         config=cfg,
     )
 
