@@ -1,6 +1,19 @@
+"""
+Create Label Studio annotation tasks from PDF files.
+
+Converts each page of each PDF into a PNG image and generates a
+``tasks.json`` file suitable for importing into Label Studio's
+multi-page document annotation workflow.
+
+Usage::
+
+    python create_tasks.py --input_dir=pdf_input/ --dataset_name=dataset
+"""
+
 import argparse
 import json
 from pathlib import Path
+
 from pdf2image import convert_from_path
 from tqdm.auto import tqdm
 
@@ -8,7 +21,21 @@ BASE_HOST_PATH = "/data/local-files/?d="
 LABEL_STUDIO_LOCAL_FILES_DOCUMENT_ROOT = "labelstudio_data/"
 
 
-def main(input_dir, dataset_name):
+def main(input_dir: str | Path, dataset_name: str) -> None:
+    """Convert PDFs to page images and create a Label Studio task file.
+
+    Each PDF page is rendered at 300 DPI and saved as a PNG file.
+    A ``tasks.json`` file is generated containing references to all
+    pages, grouped by source PDF.
+
+    Parameters
+    ----------
+    input_dir : str | Path
+        Directory containing PDF files to process.
+    dataset_name : str
+        Name for the output dataset directory under
+        ``labelstudio_data/``.
+    """
     output_dir = Path(LABEL_STUDIO_LOCAL_FILES_DOCUMENT_ROOT) / dataset_name
     task_json = []
 
@@ -40,7 +67,9 @@ def main(input_dir, dataset_name):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        description="Convert PDFs to page images and create Label Studio tasks."
+    )
     parser.add_argument(
         "--input_dir",
         default="pdf_input/",
