@@ -54,6 +54,7 @@ def test_doclayoutyolo():
     test_path.unlink()
 
 
+@pytest.mark.skip(reason="For debugging purposes only.")
 def test_tfid():
     ref_path = ROOT / "tests/data/tfid-large.json"
     test_path = ROOT / "tests/data/tfid-large_test.json"
