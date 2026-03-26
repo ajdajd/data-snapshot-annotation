@@ -1,14 +1,45 @@
+"""
+Shared utility functions for the data snapshot annotation project.
+
+Provides common helpers used across adapter modules and evaluation tools.
+"""
+
 import json
+from datetime import datetime, timezone
 from pathlib import Path
-from typing import List, Tuple
+from typing import Any, Sequence
 
 
 def load_json(path: str | Path) -> dict:
+    """Load and return a JSON file as a dictionary.
+
+    Parameters
+    ----------
+    path : str | Path
+        Path to the JSON file.
+
+    Returns
+    -------
+    dict
+        Parsed JSON contents.
+    """
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
 
 
 def clamp01(x: float) -> float:
+    """Clamp a numeric value to the ``[0, 1]`` range.
+
+    Parameters
+    ----------
+    x : float
+        Value to clamp.
+
+    Returns
+    -------
+    float
+        Clamped value.
+    """
     if x < 0.0:
         return 0.0
     elif x > 1.0:
@@ -17,8 +48,86 @@ def clamp01(x: float) -> float:
         return x
 
 
-def sanitize_bbox(b: List[float]) -> Tuple[float, float, float, float]:
+def sanitize_bbox(b: list[float]) -> tuple[float, float, float, float]:
+    """Validate and clamp a bounding box to ``[0, 1]``.
+
+    Parameters
+    ----------
+    b : list[float]
+        A four-element list ``[x1, y1, x2, y2]``.
+
+    Returns
+    -------
+    tuple[float, float, float, float]
+        Clamped ``(x1, y1, x2, y2)``.
+
+    Raises
+    ------
+    ValueError
+        If *b* is not a four-element list.
+    """
     if not (isinstance(b, list) and len(b) == 4):
         raise ValueError(f"Invalid bbox: {b}")
     x1, y1, x2, y2 = map(float, b)
     return (clamp01(x1), clamp01(y1), clamp01(x2), clamp01(y2))
+
+
+def utc_now_iso() -> str:
+    """Return the current UTC time as an ISO 8601 string with ``Z`` suffix.
+
+    Returns
+    -------
+    str
+        Timestamp in the form ``"2026-03-26T07:00:00Z"``.
+    """
+    return (
+        datetime.now(timezone.utc)
+        .replace(microsecond=0)
+        .isoformat()
+        .replace("+00:00", "Z")
+    )
+
+
+def normalize_bboxes_xyxy(
+    bboxes: Sequence[Sequence[float]], width: int, height: int
+) -> list[list[float]]:
+    """Convert bounding boxes to normalized ``[0, 1]`` xyxy format.
+
+    Absolute-pixel coordinates (detected via a ``> 1.5`` heuristic) are
+    divided by the image dimensions.  All coordinates are clamped to
+    ``[0, 1]`` and reordered so that ``x1 < x2`` and ``y1 < y2``.
+    Degenerate boxes (zero area after clamping) are silently dropped.
+
+    Parameters
+    ----------
+    bboxes : Sequence[Sequence[float]]
+        Raw bounding boxes, each as ``[x1, y1, x2, y2]``.
+    width : int
+        Image width in pixels.
+    height : int
+        Image height in pixels.
+
+    Returns
+    -------
+    list[list[float]]
+        Normalized bounding boxes that passed validation.
+    """
+    out: list[list[float]] = []
+    for bb in bboxes:
+        if len(bb) != 4:
+            continue
+        x1, y1, x2, y2 = (float(v) for v in bb)
+
+        # Heuristic: if any coord > 1.5, assume absolute pixels.
+        if max(abs(x1), abs(y1), abs(x2), abs(y2)) > 1.5:
+            x1, x2 = x1 / float(width), x2 / float(width)
+            y1, y2 = y1 / float(height), y2 / float(height)
+
+        nx1, nx2 = sorted([clamp01(x1), clamp01(x2)])
+        ny1, ny2 = sorted([clamp01(y1), clamp01(y2)])
+
+        if nx2 <= nx1 or ny2 <= ny1:
+            continue  # degenerate
+
+        out.append([nx1, ny1, nx2, ny2])
+    return out

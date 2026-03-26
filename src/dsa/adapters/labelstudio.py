@@ -1,53 +1,97 @@
+"""
+Label Studio export adapter -> Unified Evaluation Schema v1.3.
+
+Converts a Label Studio JSON export (list of annotation tasks) into a
+ground-truth JSON file that conforms to
+``data-snapshot-eval-v1.3.schema.json``.
+
+- Input: Label Studio export JSON file
+- Output: single JSON file matching data-snapshot-eval-v1.3.schema.json
+"""
+
+from __future__ import annotations
+
 import json
 from pathlib import Path
-from dsa.constants import ROOT
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
-# TODO: Move to constants.py
-INPUT_JSON_PATH = (
+from dsa.constants import LABEL_MAP, ROOT
+from dsa.utils import clamp01
+
+# ----------------------------
+# Paths / defaults
+# ----------------------------
+
+LS_EXPORT_JSON_PATH = (
     ROOT / "data/raw_input/project-22-at-2026-03-12-15-10-03fb0566.json"
-)  # Rename to LS_EXPORT_JSON_PATH
+)
 OUTPUT_JSON_PATH = ROOT / "data/evaluation_input/ground_truth.json"
 PDF_INPUT_DIR = "pdf_input/"
 
 
-# TODO: Move to utils.py
-def _clamp01(x: float) -> float:
-    return 0.0 if x < 0.0 else 1.0 if x > 1.0 else x
+# ----------------------------
+# Coordinate conversion
+# ----------------------------
 
 
-def _ls_rect_to_xyxy_norm(rect_value: Dict[str, Any]) -> List[float]:
-    """
-    Label Studio rectanglelabels use percentage units:
-      x,y,width,height are in [0,100] relative to image width/height.
+def _ls_rect_to_xyxy_norm(rect_value: dict[str, Any]) -> list[float]:
+    """Convert a Label Studio rectangle annotation to normalized xyxy.
 
-    Convert to normalized_xyxy in [0,1]:
-      [x1, y1, x2, y2]
+    Label Studio ``rectanglelabels`` use percentage units where ``x``, ``y``,
+    ``width``, and ``height`` are in ``[0, 100]`` relative to the image
+    dimensions.
+
+    Parameters
+    ----------
+    rect_value : dict[str, Any]
+        The ``"value"`` dict from a Label Studio rectangle result, containing
+        ``"x"``, ``"y"``, ``"width"``, and ``"height"`` keys.
+
+    Returns
+    -------
+    list[float]
+        Normalized bounding box as ``[x1, y1, x2, y2]`` in ``[0, 1]``.
     """
     x = float(rect_value["x"]) / 100.0
     y = float(rect_value["y"]) / 100.0
     w = float(rect_value["width"]) / 100.0
     h = float(rect_value["height"]) / 100.0
 
-    x1 = _clamp01(x)
-    y1 = _clamp01(y)
-    x2 = _clamp01(x + w)
-    y2 = _clamp01(y + h)
+    x1 = clamp01(x)
+    y1 = clamp01(y)
+    x2 = clamp01(x + w)
+    y2 = clamp01(y + h)
 
-    # Ensure strict ordering
+    # Ensure strict ordering.
     eps = 1e-9
     if x2 <= x1:
-        x2 = _clamp01(x1 + eps)
+        x2 = clamp01(x1 + eps)
     if y2 <= y1:
-        y2 = _clamp01(y1 + eps)
+        y2 = clamp01(y1 + eps)
 
     return [x1, y1, x2, y2]
 
 
 def _best_page_dims_for_item(
-    results: List[Dict[str, Any]], item_index: int
-) -> Optional[Tuple[int, int]]:
-    """Infer page image dimensions from any rectangle result on the page."""
+    results: list[dict[str, Any]], item_index: int
+) -> tuple[int, int] | None:
+    """Infer page image dimensions from rectangle results.
+
+    Scans the annotation results for any ``rectanglelabels`` entry on the
+    given page that includes ``original_width`` and ``original_height``.
+
+    Parameters
+    ----------
+    results : list[dict[str, Any]]
+        The ``"result"`` list from a Label Studio annotation.
+    item_index : int
+        Page index within the task (0-based).
+
+    Returns
+    -------
+    tuple[int, int] | None
+        ``(width_px, height_px)`` if found, ``None`` otherwise.
+    """
     for r in results:
         if r.get("type") == "rectanglelabels" and r.get("item_index") == item_index:
             ow = r.get("original_width")
@@ -57,21 +101,51 @@ def _best_page_dims_for_item(
     return None
 
 
+# ----------------------------
+# Main adapter
+# ----------------------------
+
+
 def convert_labelstudio_export_to_eval_v13(
     input_json_path: str | Path,
     output_json_path: str | Path,
     *,
     dataset_id: str = "labelstudio_export",
-    created_at: Optional[str] = None,
-    label_map: Optional[Dict[str, str]] = None,
-) -> Dict[str, Any]:
-    """
-    Convert a Label Studio export JSON file (list of tasks) into the unified evaluation
-    schema v1.3 JSON format and save it to output_json_path.
+    created_at: str | None = None,
+    label_map: dict[str, str] | None = None,
+) -> dict[str, Any]:
+    """Convert a Label Studio export to Unified Evaluation Schema v1.3.
 
-    - Keep all rectanglelabels, including non-supported labels like "For review".
-      (Filtering happens at evaluation time.)
-    - Drop pages that have no rectangle annotations (any label).
+    Reads a Label Studio JSON export file (list of annotation tasks) and
+    writes a ground-truth JSON file in the unified evaluation format.
+
+    All ``rectanglelabels`` are kept, including non-canonical labels such as
+    ``"For review"``.  Filtering happens at evaluation time.
+    Pages with no rectangle annotations are dropped.
+
+    Parameters
+    ----------
+    input_json_path : str | Path
+        Path to the Label Studio export JSON file.
+    output_json_path : str | Path
+        Destination path for the ground-truth JSON.
+    dataset_id : str
+        Identifier for this dataset in the output metadata.
+    created_at : str | None
+        ISO 8601 timestamp override.  When ``None``, uses the latest
+        ``updated_at`` from the export tasks.
+    label_map : dict[str, str] | None
+        Canonical label map.  Defaults to ``LABEL_MAP`` from constants.
+
+    Returns
+    -------
+    dict[str, Any]
+        The complete output dictionary that was written to disk.
+
+    Raises
+    ------
+    ValueError
+        If the input JSON is not a non-empty list of tasks.
     """
     input_json_path = Path(input_json_path)
     output_json_path = Path(output_json_path)
@@ -84,14 +158,11 @@ def convert_labelstudio_export_to_eval_v13(
             "Expected Label Studio export to be a non-empty list of tasks."
         )
 
-    # Keep canonical label_map unless caller overrides it.
-    # We still include it top-level because v1.3 expects it, even if export contains extra labels.
-    # TODO: Move to cosntants.py
     if label_map is None:
-        label_map = {"1": "Figure", "2": "Table"}
+        label_map = dict(LABEL_MAP)
 
-    documents: List[Dict[str, str]] = []
-    page_entries: List[Dict[str, Any]] = []
+    documents: list[dict[str, str]] = []
+    page_entries: list[dict[str, Any]] = []
     seen_docs: set[str] = set()
 
     for task in tasks:
@@ -128,7 +199,7 @@ def convert_labelstudio_export_to_eval_v13(
             continue
 
         for page_index, page_path in enumerate(pages):
-            objects: List[Dict[str, Any]] = []
+            objects: list[dict[str, Any]] = []
 
             for r in results:
                 if r.get("type") != "rectanglelabels":
@@ -154,7 +225,7 @@ def convert_labelstudio_export_to_eval_v13(
                     }
                 )
 
-            # Drop pages without ANY rectangle annotations (any label)
+            # Drop pages without any rectangle annotations.
             if not objects:
                 continue
 
@@ -188,7 +259,7 @@ def convert_labelstudio_export_to_eval_v13(
                 latest = u
         created_at = latest or "unknown"
 
-    output_obj: Dict[str, Any] = {
+    output_obj: dict[str, Any] = {
         "label_map": label_map,
         "info": {
             "schema_version": "1.3",
@@ -212,11 +283,55 @@ def convert_labelstudio_export_to_eval_v13(
     return output_obj
 
 
-def main():
-    convert_labelstudio_export_to_eval_v13(INPUT_JSON_PATH, OUTPUT_JSON_PATH)
-    # TODO: Print done
+# ----------------------------
+# CLI
+# ----------------------------
+
+
+def main() -> None:
+    """Run the Label Studio export conversion with default paths."""
+    result = convert_labelstudio_export_to_eval_v13(
+        LS_EXPORT_JSON_PATH, OUTPUT_JSON_PATH
+    )
+    n_docs = len(result.get("documents", []))
+    n_pages = len(result.get("predictions", []))
+    print(f"Done. {n_docs} documents, {n_pages} pages -> {OUTPUT_JSON_PATH}")
 
 
 if __name__ == "__main__":
-    # TODO: Add ArgumentParser
-    main()
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description=(
+            "Convert a Label Studio export JSON to a "
+            "Unified Evaluation Schema v1.3 ground-truth file."
+        )
+    )
+    parser.add_argument(
+        "--input_json_path",
+        type=str,
+        default=str(LS_EXPORT_JSON_PATH),
+        help="Path to the Label Studio export JSON file.",
+    )
+    parser.add_argument(
+        "--output_json_path",
+        type=str,
+        default=str(OUTPUT_JSON_PATH),
+        help="Destination path for the ground-truth JSON.",
+    )
+    parser.add_argument(
+        "--dataset_id",
+        type=str,
+        default="labelstudio_export",
+        help="Dataset identifier for the output metadata.",
+    )
+    args = parser.parse_args()
+
+    result = convert_labelstudio_export_to_eval_v13(
+        args.input_json_path,
+        args.output_json_path,
+        dataset_id=args.dataset_id,
+    )
+    n_docs = len(result.get("documents", []))
+    n_pages = len(result.get("predictions", []))
+    print(f"Done. {n_docs} documents, {n_pages} pages -> {args.output_json_path}")
