@@ -5,8 +5,8 @@ DocLayout-YOLO adapter -> Unified Evaluation Schema v1.3.
 - Output: single JSON file matching data-snapshot-eval-v1.3.schema.json
 
 Model: DocLayout-YOLO fine-tuned on DocStructBench
-  - Local  : data/models/doclayout_yolo_docstructbench_imgsz1024.pt
-  - Remote : juliozhao/DocLayout-YOLO-DocStructBench  (HuggingFace repo ID)
+  - Local  : models/doclayout_yolo_docstructbench_imgsz1024.pt
+  - Remote : juliozhao/DocLayout-YOLO-DocStructBench (HuggingFace repo ID)
 """
 
 from __future__ import annotations
@@ -20,14 +20,12 @@ from doclayout_yolo import YOLOv10
 from pdf2image import convert_from_path
 from tqdm.auto import tqdm
 
-from dsa.constants import LABEL_MAP, ROOT, MODELS_DIR
+from dsa.constants import LABEL_MAP, MODELS_DIR, PDF_INPUT_DIR, ROOT
 from dsa.utils import normalize_bboxes_xyxy, utc_now_iso
 
 MODEL_NAME = "juliozhao/DocLayout-YOLO-DocStructBench"
 MODEL_FILENAME = "doclayout_yolo_docstructbench_imgsz1024.pt"
 MODEL_PATH_DEFAULT = MODELS_DIR / MODEL_FILENAME
-
-INPUT_PDF_DIR = ROOT / "pdf_input"
 OUTPUT_JSON_PATH = ROOT / "data/evaluation_input/doclayout-yolo.json"
 
 # DocLayout-YOLO / DocStructBench class names that map to our canonical labels.
@@ -69,9 +67,6 @@ def _coerce_label(raw: Any) -> str | None:
     if s_low in _LABEL_NORMALIZATION:
         return _LABEL_NORMALIZATION[s_low]
     return None
-
-
-# TODO: Implement caching/hf_hub_download if repo_id is given
 
 
 class DocLayoutYOLOConfig:
@@ -149,6 +144,7 @@ def run_doclayout_yolo_adapter_directory(
     output_json_path.parent.mkdir(parents=True, exist_ok=True)
 
     cfg = config or DocLayoutYOLOConfig()
+    # TODO: Implement caching/hf_hub_download if repo_id is given
     model = YOLOv10(cfg.model_path)
 
     pdf_files = sorted(input_pdf_dir.rglob("*.pdf"))
@@ -276,7 +272,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--input_pdf_dir",
         type=str,
-        default=str(INPUT_PDF_DIR),
+        default=str(PDF_INPUT_DIR),
         help="Directory of PDF files to process.",
     )
     parser.add_argument(
