@@ -12,6 +12,14 @@ from dsa.adapters.doclayoutyolo import (
     run_doclayout_yolo_adapter_directory,
 )
 from dsa.adapters.tfid import TFIDConfig, run_tfid_adapter_directory
+try:
+    from dsa.adapters.layoutlmv3 import (
+        LayoutLMv3Config,
+        run_layoutlmv3_adapter_directory,
+    )
+except ImportError:
+    LayoutLMv3Config = None  # type: ignore[assignment,misc]
+    run_layoutlmv3_adapter_directory = None  # type: ignore[assignment]
 
 
 @pytest.mark.skip(reason="For debugging purposes only.")
@@ -75,3 +83,26 @@ def test_tfid():
 
     # Delete test file
     test_path.unlink()
+
+
+@pytest.mark.skip(reason="For debugging purposes only.")
+def test_layoutlmv3():
+    ref_path = ROOT / "tests/data/layoutlmv3.json"
+    test_path = ROOT / "tests/data/layoutlmv3_test.json"
+
+    cfg = LayoutLMv3Config()
+    run_layoutlmv3_adapter_directory(
+        ROOT / "pdf_input",
+        test_path,
+        config=cfg,
+    )
+
+    ref = load_json(ref_path)
+    del ref["info"]
+    test = load_json(test_path)
+    del test["info"]
+
+    assert json.dumps(ref) == json.dumps(test)
+
+    test_path.unlink()
+

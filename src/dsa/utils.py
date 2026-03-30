@@ -4,6 +4,8 @@ Shared utility functions for the data snapshot annotation project.
 Provides common helpers used across adapter modules and evaluation tools.
 """
 
+from __future__ import annotations
+
 import json
 from datetime import datetime, timezone
 from pathlib import Path

@@ -1,5 +1,6 @@
 [build-system]
-requires = ["setuptools >= 77.0.3"]
+# requires = ["setuptools >= 77.0.3"]
+requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 
@@ -7,7 +8,7 @@ build-backend = "setuptools.build_meta"
 name = "data-snapshot-annotation"
 version = "0.1.0"
 description = "Label Studio and evaluation framework for data snapshot detection in PDF documents"
-requires-python = ">=3.10,<3.11"
+# requires-python = ">=3.10,<3.11"
 readme = "README.md"
 
 dependencies = [
@@ -25,12 +26,19 @@ doclayout_yolo = [
     "doclayout-yolo",
     "huggingface-hub",
 ]
+layoutlmv3 = [
+    "detectron2",
+    "layoutlmv3",
+    "numpy",
+    "huggingface-hub",
+    "torch",
+]
 viz = [
     "opencv-python",
     "numpy",
 ]
 dev = [
-    "data-snapshot-annotation[tfid,doclayout_yolo,viz]",
+    "data-snapshot-annotation[tfid,doclayout_yolo,viz,layoutlmv3]",
     "pytest==9.0.2",
     "black==25.1.0",
 ]

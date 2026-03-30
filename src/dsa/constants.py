@@ -5,6 +5,8 @@ This module provides a centralized location for directory paths, file paths,
 evaluation thresholds, and other settings used throughout the project.
 """
 
+from __future__ import annotations
+
 from pathlib import Path
 
 # Base project directory
