@@ -20,8 +20,8 @@ LABEL_MAP: dict[str, str] = {
 
 # evaluate_model.py
 GT_JSON_PATH = ROOT / "data/evaluation_input/ground_truth.json"
-PRED_JSON_PATH = ROOT / "data/evaluation_input/yolov26.json"
-OUTPUT_REPORT_PATH = ROOT / "data/evaluation_output/report_yolov26.json"
+PRED_JSON_PATH = ROOT / "data/evaluation_input/yolov11.json"
+OUTPUT_REPORT_PATH = ROOT / "data/evaluation_output/report_yolov11.json"
 IOU_THRESHOLDS = [0.5, 0.75]
 LABELS_TO_CONSIDER = ["Figure", "Table"]
 
