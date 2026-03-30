@@ -20,12 +20,12 @@ from doclayout_yolo import YOLOv10
 from pdf2image import convert_from_path
 from tqdm.auto import tqdm
 
-from dsa.constants import LABEL_MAP, ROOT
+from dsa.constants import LABEL_MAP, ROOT, MODELS_DIR
 from dsa.utils import normalize_bboxes_xyxy, utc_now_iso
 
 MODEL_NAME = "juliozhao/DocLayout-YOLO-DocStructBench"
 MODEL_FILENAME = "doclayout_yolo_docstructbench_imgsz1024.pt"
-MODEL_PATH_DEFAULT = ROOT / "data" / "models" / MODEL_FILENAME
+MODEL_PATH_DEFAULT = MODELS_DIR / MODEL_FILENAME
 
 INPUT_PDF_DIR = ROOT / "pdf_input"
 OUTPUT_JSON_PATH = ROOT / "data/evaluation_input/doclayout-yolo.json"
@@ -69,6 +69,9 @@ def _coerce_label(raw: Any) -> str | None:
     if s_low in _LABEL_NORMALIZATION:
         return _LABEL_NORMALIZATION[s_low]
     return None
+
+
+# TODO: Implement caching/hf_hub_download if repo_id is given
 
 
 class DocLayoutYOLOConfig:

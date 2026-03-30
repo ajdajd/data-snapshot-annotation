@@ -7,9 +7,10 @@ evaluation thresholds, and other settings used throughout the project.
 
 from pathlib import Path
 
-# Base project directory
+# Directories
 ROOT = Path(__file__).parent.parent.parent
 PDF_INPUT_DIR = ROOT / "pdf_input"
+MODELS_DIR = ROOT / "models"
 
 # Canonical label map (Unified Evaluation Schema v1.3)
 LABEL_MAP: dict[str, str] = {
