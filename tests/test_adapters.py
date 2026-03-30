@@ -12,7 +12,7 @@ from dsa.adapters.doclayoutyolo import (
     run_doclayout_yolo_adapter_directory,
 )
 from dsa.adapters.tfid import TFIDConfig, run_tfid_adapter_directory
-
+from dsa.adapters.yolov26 import YOLOv26Config, run_yolov26_adapter_directory
 
 @pytest.mark.skip(reason="For debugging purposes only.")
 def test_labelstudio():
@@ -63,6 +63,30 @@ def test_tfid():
     run_tfid_adapter_directory(
         ROOT / "pdf_input",
         test_path,
+        config=cfg,
+    )
+
+    ref = load_json(ref_path)
+    del ref["info"]
+    test = load_json(test_path)
+    del test["info"]
+
+    assert json.dumps(ref) == json.dumps(test)
+
+    # Delete test file
+    test_path.unlink()
+
+
+@pytest.mark.skip(reason="For debugging purposes only.")
+def test_yolov26():
+    ref_path = ROOT / "tests/data/yolov26.json"
+    test_path = ROOT / "tests/data/yolov26_test.json"
+
+    cfg = YOLOv26Config()
+    run_yolov26_adapter_directory(
+        input_pdf_dir=ROOT / "pdf_input",
+        output_json_path=test_path,
+        run_id=None,
         config=cfg,
     )
 
