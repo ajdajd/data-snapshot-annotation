@@ -27,6 +27,7 @@ MODEL_NAME = "juliozhao/DocLayout-YOLO-DocStructBench"
 MODEL_FILENAME = "doclayout_yolo_docstructbench_imgsz1024.pt"
 MODEL_PATH_DEFAULT = MODELS_DIR / MODEL_FILENAME
 OUTPUT_JSON_PATH = ROOT / "data/evaluation_input/doclayout-yolo.json"
+IMGSZ = 1024
 
 # DocLayout-YOLO / DocStructBench class names that map to our canonical labels.
 # All other classes (title, text, caption, formula, …) are ignored.
@@ -285,7 +286,7 @@ if __name__ == "__main__":
     parser.add_argument("--device", type=str, default="cpu")
     parser.add_argument("--dpi", type=int, default=300)
     parser.add_argument("--conf", type=float, default=0.2)
-    parser.add_argument("--imgsz", type=int, default=1024)
+    parser.add_argument("--imgsz", type=int, default=IMGSZ)
     parser.add_argument(
         "--store_doc_path_as",
         type=str,
