@@ -12,8 +12,8 @@ from dsa.adapters.doclayoutyolo import (
     run_doclayout_yolo_adapter_directory,
 )
 from dsa.adapters.tfid import TFIDConfig, run_tfid_adapter_directory
-from dsa.adapters.yolov26 import YOLOv26Config, run_yolov26_adapter_directory
-from dsa.adapters.yolov11 import YOLOv11Config, run_yolov11_adapter_directory
+from dsa.adapters.yolo26 import YOLO26Config, run_yolo26_adapter_directory
+from dsa.adapters.yolo11 import YOLO11Config, run_yolo11_adapter_directory
 
 
 @pytest.mark.skip(reason="For debugging purposes only.")
@@ -80,12 +80,12 @@ def test_tfid():
 
 
 @pytest.mark.skip(reason="For debugging purposes only.")
-def test_yolov26():
-    ref_path = ROOT / "tests/data/yolov26.json"
-    test_path = ROOT / "tests/data/yolov26_test.json"
+def test_yolo26():
+    ref_path = ROOT / "tests/data/yolo26.json"
+    test_path = ROOT / "tests/data/yolo26_test.json"
 
-    cfg = YOLOv26Config()
-    run_yolov26_adapter_directory(
+    cfg = YOLO26Config()
+    run_yolo26_adapter_directory(
         input_pdf_dir=ROOT / "pdf_input",
         output_json_path=test_path,
         run_id=None,
@@ -104,12 +104,12 @@ def test_yolov26():
 
 
 @pytest.mark.skip(reason="For debugging purposes only.")
-def test_yolov11():
-    ref_path = ROOT / "tests/data/yolov11.json"
-    test_path = ROOT / "tests/data/yolov11_test.json"
+def test_yolo11():
+    ref_path = ROOT / "tests/data/yolo11.json"
+    test_path = ROOT / "tests/data/yolo11_test.json"
 
-    cfg = YOLOv11Config()
-    run_yolov11_adapter_directory(
+    cfg = YOLO11Config()
+    run_yolo11_adapter_directory(
         input_pdf_dir=ROOT / "pdf_input",
         output_json_path=test_path,
         run_id=None,

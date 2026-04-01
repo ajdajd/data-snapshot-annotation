@@ -25,7 +25,7 @@ doclayout_yolo = [
     "doclayout-yolo",
     "huggingface-hub",
 ]
-yolov26 = [
+yolo26 = [
     "huggingface-hub",
     "ultralytics",
 ]
@@ -34,7 +34,7 @@ viz = [
     "opencv-python",
 ]
 dev = [
-    "data-snapshot-annotation[tfid,doclayout_yolo,viz,yolov26]",
+    "data-snapshot-annotation[tfid,doclayout_yolo,viz,yolo26]",
     "pytest==9.0.2",
     "black==25.1.0",
 ]

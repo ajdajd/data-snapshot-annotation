@@ -1,10 +1,10 @@
 """
-YOLOv11 adapter -> Unified Evaluation Schema v1.3.
+YOLO11 adapter -> Unified Evaluation Schema v1.3.
 
 - Input: directory of PDFs
 - Output: single JSON file matching data-snapshot-eval-v1.3.schema.json
 
-Model: YOLOv11 Document Layout
+Model: YOLO11 Document Layout
   - Local  : models/yolo11m_doc_layout.pt
   - Remote : Armaggheddon/yolo11-document-layout (HuggingFace repo ID)
 """
@@ -27,7 +27,7 @@ from dsa.utils import normalize_bboxes_xyxy, utc_now_iso
 MODEL_NAME = "Armaggheddon/yolo11-document-layout"
 MODEL_FILENAME = "yolo11m_doc_layout.pt"
 
-OUTPUT_JSON_PATH = ROOT / "data/evaluation_input/yolov11.json"
+OUTPUT_JSON_PATH = ROOT / "data/evaluation_input/yolo11.json"
 
 # Raw YOLO class names that map to canonical labels.
 _LABEL_NORMALIZATION: dict[str, str] = {
@@ -64,8 +64,8 @@ def _coerce_label(raw: Any) -> str | None:
     return None
 
 
-class YOLOv11Config:
-    """Configuration for the YOLOv11 adapter.
+class YOLO11Config:
+    """Configuration for the YOLO11 adapter.
 
     See https://docs.ultralytics.com/modes/predict/#inference-arguments for full list of arguments.
 
@@ -110,14 +110,14 @@ class YOLOv11Config:
         self.store_doc_path_as = store_doc_path_as
 
 
-def run_yolov11_adapter_directory(
+def run_yolo11_adapter_directory(
     input_pdf_dir: str | Path,
     output_json_path: str | Path,
     *,
     run_id: str | None = None,
-    config: YOLOv11Config | None = None,
+    config: YOLO11Config | None = None,
 ) -> Path:
-    """Run YOLOv11 on every PDF in a directory and write predictions.
+    """Run YOLO11 on every PDF in a directory and write predictions.
 
     Produces a single Unified Evaluation Schema v1.3 JSON file containing
     predictions for all pages across all PDFs.
@@ -131,7 +131,7 @@ def run_yolov11_adapter_directory(
     run_id : str | None
         Optional identifier for this evaluation run. Auto-generated if not
         provided.
-    config : YOLOv11Config | None
+    config : YOLO11Config | None
         Adapter configuration. Uses defaults when ``None``.
 
     Returns
@@ -148,7 +148,7 @@ def run_yolov11_adapter_directory(
     output_json_path = Path(output_json_path)
     output_json_path.parent.mkdir(parents=True, exist_ok=True)
 
-    cfg = config or YOLOv11Config()
+    cfg = config or YOLO11Config()
 
     MODELS_DIR.mkdir(parents=True, exist_ok=True)
     model_path = hf_hub_download(
@@ -163,7 +163,7 @@ def run_yolov11_adapter_directory(
     if not pdf_files:
         raise FileNotFoundError(f"No PDFs found under: {input_pdf_dir}")
 
-    run_id = run_id or f"yolov11-{uuid.uuid4().hex[:10]}"
+    run_id = run_id or f"yolo11-{uuid.uuid4().hex[:10]}"
 
     documents: list[dict[str, str]] = []
     predictions: list[dict[str, Any]] = []
@@ -254,7 +254,7 @@ def run_yolov11_adapter_directory(
                 "name": cfg.repo_id,
                 "version": cfg.filename,
                 "notes": (
-                    f"adapter=yolov11; "
+                    f"adapter=yolo11; "
                     f"device={cfg.device}; dpi={cfg.dpi}; "
                     f"conf={cfg.conf}; iou={cfg.iou}; imgsz={cfg.imgsz}"
                 ),
@@ -279,7 +279,7 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(
-        description="Run YOLOv11 over a PDF directory and produce a v1.3 prediction JSON."
+        description="Run YOLO11 over a PDF directory and produce a v1.3 prediction JSON."
     )
     parser.add_argument(
         "--input_pdf_dir",
@@ -309,7 +309,7 @@ if __name__ == "__main__":
         "--repo_id",
         type=str,
         default=MODEL_NAME,
-        help=("HuggingFace repo ID for the YOLOv11 model."),
+        help=("HuggingFace repo ID for the YOLO11 model."),
     )
     parser.add_argument(
         "--filename",
@@ -323,7 +323,7 @@ if __name__ == "__main__":
     pdf_files = list(pdf_dir.rglob("*.pdf"))
     print(f"PDFs found    : {len(pdf_files)}")
 
-    cfg = YOLOv11Config(
+    cfg = YOLO11Config(
         repo_id=args.repo_id,
         filename=args.filename,
         device=args.device,
@@ -334,7 +334,7 @@ if __name__ == "__main__":
         store_doc_path_as=args.store_doc_path_as,
     )
 
-    out_path = run_yolov11_adapter_directory(
+    out_path = run_yolo11_adapter_directory(
         args.input_pdf_dir,
         args.output_json_path,
         run_id=args.run_id,
