@@ -23,22 +23,20 @@ from tqdm.auto import tqdm
 from dsa.constants import LABEL_MAP, MODELS_DIR, PDF_INPUT_DIR, ROOT
 from dsa.utils import normalize_bboxes_xyxy, utc_now_iso
 
-MODEL_NAME = "juliozhao/DocLayout-YOLO-DocStructBench"
-MODEL_FILENAME = "doclayout_yolo_docstructbench_imgsz1024.pt"
+MODEL_NAME = "juliozhao/DocLayout-YOLO-D4LA-Docsynth300K_pretrained"
+MODEL_FILENAME = "doclayout_yolo_d4la_imgsz1600_docsynth_pretrain.pt"
 MODEL_PATH_DEFAULT = MODELS_DIR / MODEL_FILENAME
-OUTPUT_JSON_PATH = ROOT / "data/evaluation_input/doclayout-yolo.json"
-IMGSZ = 1024
+OUTPUT_JSON_PATH = (
+    ROOT / "data/evaluation_input/DocLayout-YOLO-D4LA-Docsynth300K_pretrained.json"
+)
+IMGSZ = 1600
 
 # DocLayout-YOLO / DocStructBench class names that map to our canonical labels.
 # All other classes (title, text, caption, formula, …) are ignored.
 _LABEL_NORMALIZATION: dict[str, str] = {
     "figure": "Figure",
-    "fig": "Figure",
-    "image": "Figure",
-    "chart": "Figure",
-    "diagram": "Figure",
+    "picture": "Figure",
     "table": "Table",
-    "tbl": "Table",
 }
 _ALLOWED_LABELS = set(LABEL_MAP.values())
 
