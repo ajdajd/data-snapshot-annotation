@@ -29,7 +29,7 @@ This repository consists of two parts:
     ```
 4. Open `http://localhost:8080/` on a web browser and create a login.
 
-## Setting up an annotation project
+## Setting up an annotation project (manual)
 
 ### 1. Pre-requisites
 
