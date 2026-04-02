@@ -26,8 +26,8 @@ from dsa.utils import normalize_bboxes_xyxy, utc_now_iso
 
 MODEL_NAME = "Armaggheddon/yolo11-document-layout"
 MODEL_FILENAME = "yolo11m_doc_layout.pt"
-
 OUTPUT_JSON_PATH = ROOT / "data/evaluation_input/yolo11.json"
+IMGSZ = 1280
 
 # Raw YOLO class names that map to canonical labels.
 _LABEL_NORMALIZATION: dict[str, str] = {
@@ -298,7 +298,7 @@ if __name__ == "__main__":
     parser.add_argument("--dpi", type=int, default=300)
     parser.add_argument("--conf", type=float, default=0.25)
     parser.add_argument("--iou", type=float, default=0.7)
-    parser.add_argument("--imgsz", type=int, default=1280)
+    parser.add_argument("--imgsz", type=int, default=IMGSZ)
     parser.add_argument(
         "--store_doc_path_as",
         type=str,
