@@ -67,6 +67,35 @@ This repository consists of two parts:
     13. Click `Next` > `Save`. (Important: Do NOT click `Save & Sync`.)
 3. Go to the project tab. Each row (called a "task") should correspond to a PDF file to annotate.
 
+## Setting up an annotation project with pre-labeling
+1. Start Label Studio.
+    ```shell
+    docker compose up
+    ```
+2. Generate prediction file(s). See [Generating prediction files](#generating-prediction-files) for the list of supported models and installation info.
+    ```shell
+    python src/dsa/adapters/{adapter}.py \
+    --input_pdf_dir=pdf_input/ \
+    --output_json_path=data/evaluation_input/preds.json
+    ```
+
+3. (Optional) Combine prediction files by assigning a class to a source.
+    ```shell
+    python src/scripts/combine_pred_files.py \
+    --figure_preds=data/evaluation_input/preds1.json \
+    --table_preds=data/evaluation_input/preds2.json \
+    --output_json_path=data/evaluation_input/combined_preds.json  
+    ```
+
+4. Create project and tasks.
+    ```shell
+    python create_tasks_with_prelabeling.py \
+    --project_name="My project" \
+    --dataset_name=dataset \
+    --input_pdf_dir=pdf_input/ \
+    --pred_json_path=data/evaluation_input/preds.json
+    ```
+
 # Model evaluation
 
 Evaluating models requires two files:
@@ -77,7 +106,9 @@ These should match the schema laid out in the Data Snapshot Evaluation Format (v
 
 To run an evaluation, run
 ```shell
-python src/dsa/evaluate_model.py --gt_json_path=path/to/ground_truth.json --pred_json_path=path/to/pred.json
+python src/dsa/evaluate_model.py \
+--gt_json_path=path/to/ground_truth.json \
+--pred_json_path=path/to/preds.json
 ```
 
 ## Pre-requisites
