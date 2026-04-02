@@ -1,8 +1,13 @@
 # data-snapshot-annotation
 
-Label Studio and evaluation framework for data snapshot detection in PDF documents.
+Label Studio and model evaluation framework for data snapshot detection in PDF documents.
 
-# First time setup
+This repository consists of two parts: 
+1. Label Studio for annotation
+2. Model evaluation
+
+# Label Studio
+## First time setup
 
 1. Clone the repository.
     ```shell
@@ -24,9 +29,9 @@ Label Studio and evaluation framework for data snapshot detection in PDF documen
     ```
 4. Open `http://localhost:8080/` on a web browser and create a login.
 
-# Setting up an annotation project
+## Setting up an annotation project
 
-## 1. Pre-requisites
+### 1. Pre-requisites
 
 1. Install dependencies.
     ```shell
@@ -37,14 +42,14 @@ Label Studio and evaluation framework for data snapshot detection in PDF documen
     sudo apt-get install poppler-utils
     ```
 
-## 2. Converting PDFs to images and creating tasks for Label Studio
+### 2. Converting PDFs to images and creating tasks for Label Studio
 1. Add PDF files to the `pdf_input` directory.
 2. Run `python create_tasks.py --dataset_name=={dataset}`. The `dataset_name` parameter may be set into any string.
 3. This will generate the following files into the `labelstudio_data/{dataset}` directory:
     - Individual PNG files for each page of each PDF
     - A `tasks.json` file.
 
-## 3. Creating an annotation project
+### 3. Creating an annotation project
 1. Setup the project.
     1. Open Label Studio and click `Create Project`.
     2. Fill out Project Name page.
@@ -62,7 +67,7 @@ Label Studio and evaluation framework for data snapshot detection in PDF documen
     13. Click `Next` > `Save`. (Important: Do NOT click `Save & Sync`.)
 3. Go to the project tab. Each row (called a "task") should correspond to a PDF file to annotate.
 
-# Evaluating models
+# Model evaluation
 
 Evaluating models requires two files:
 1. Ground truth JSON file - provides the bounding boxes against which the evaluator will compare the predictions
@@ -79,7 +84,7 @@ python src/dsa/evaluate_model.py --gt_json_path=path/to/ground_truth.json --pred
 
 1. Install additional dependencies.
     ```shell
-    pip install -e .[dev]
+    pip install -e .
     ```
 2. Generate ground truth file `ground_truth.json`.
     1. Open Label Studio and select the project.
@@ -89,9 +94,17 @@ python src/dsa/evaluate_model.py --gt_json_path=path/to/ground_truth.json --pred
 ## Generating prediction files
 Supported models:
 - [yifeihu/TF-ID-large](https://huggingface.co/yifeihu/TF-ID-large)
+  - Install dependencies: `pip install -e .[tfid]`
   - Run `python src/dsa/adapters/tfid.py` to generate `data/evaluation_input/tfid-large.json`.
 - [juliozhao/DocLayout-YOLO-DocStructBench](https://huggingface.co/juliozhao/DocLayout-YOLO-DocStructBench)
-  - Run `python src/dsa/adapters/doclayoutyolo.py` to generate `data/evaluation_input/doclayout-yolo.json`.
+  - Install dependencies: `pip install -e .[doclayout_yolo]`
+  - Run `python src/dsa/adapters/doclayoutyolo.py` to generate `data/evaluation_input/DocLayout-YOLO-DocStructBench.json`.
+- [Armaggheddon/yolo11-document-layout](https://huggingface.co/Armaggheddon/yolo11-document-layout)
+  - Install dependencies: `pip install -e .[yolo11]`
+  - Run `python src/dsa/adapters/yolo11.py` to generate `data/evaluation_input/yolo11.json`.
+- [Armaggheddon/yolo26-document-layout](https://huggingface.co/Armaggheddon/yolo26-document-layout)
+  - Install dependencies: `pip install -e .[yolo26]`
+  - Run `python src/dsa/adapters/yolo26.py` to generate `data/evaluation_input/yolo26.json`.
 
 ## Visualizing predictions
 To render annotated page images comparing ground truth and predictions:

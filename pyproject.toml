@@ -25,6 +25,10 @@ doclayout_yolo = [
     "doclayout-yolo",
     "huggingface-hub",
 ]
+yolo11 = [
+    "huggingface-hub",
+    "ultralytics",
+]
 yolo26 = [
     "huggingface-hub",
     "ultralytics",
