@@ -44,7 +44,7 @@ This repository consists of two parts:
 
 ### 2. Converting PDFs to images and creating tasks for Label Studio
 1. Add PDF files to the `pdf_input` directory.
-2. Run `python create_tasks.py --dataset_name=={dataset}`. The `dataset_name` parameter may be set into any string.
+2. Run `python create_tasks.py --dataset_name={dataset}`. The `dataset_name` parameter may be set into any string.
 3. This will generate the following files into the `labelstudio_data/{dataset}` directory:
     - Individual PNG files for each page of each PDF
     - A `tasks.json` file.
