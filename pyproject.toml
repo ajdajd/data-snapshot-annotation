@@ -11,7 +11,9 @@ requires-python = ">=3.10,<3.11"
 readme = "README.md"
 
 dependencies = [
+    "label-studio-sdk==2.0.19",
     "pdf2image==1.17.0",
+    "python-dotenv",
     "tqdm==4.67.1",
 ]
 
