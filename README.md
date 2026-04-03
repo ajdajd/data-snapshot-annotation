@@ -29,6 +29,16 @@ This repository consists of two parts:
     ```
 4. Open `http://localhost:8080/` on a web browser and create a login.
 
+## Adding an API key to the .env file
+
+1. Open Label Studio.
+2. At the top-left corner, click the hamburger menu (≡) and select `Organization`.
+3. At the top-right corner, click `API Tokens Settings`.
+4. Enable `Legacy Tokens` and click `Save Changes`.
+5. At the top-right corner, click the portrait and select `Account & Settings`.
+6. At the left menu, click `Legacy Token`.
+7. Copy the token and add it to the `.env` file.
+
 ## Setting up an annotation project (manual)
 
 ### 1. Pre-requisites
@@ -95,6 +105,35 @@ This repository consists of two parts:
     --input_pdf_dir=pdf_input/ \
     --pred_json_path=data/evaluation_input/preds.json
     ```
+
+## Backing up an annotation project
+1. Make sure Label Studio is started.
+    ```shell
+    docker compose up
+    ```
+2. Run `export_project.py`.
+    ```shell
+    python src/scripts/export_project.py \
+    --project_id=22 \
+    --output_path=backups/project_22_backup.json
+    ```
+
+## Restoring an annotation project
+1. Prepare the following files:
+    a. Backup JSON file (e.g., `backups/project_22_backup.json`)
+    b. PDF files (e.g., in `pdf_input/`)
+2. Make sure Label Studio is started.
+    ```shell
+    docker compose up
+    ```
+3. Run `import_project.py`.
+    ```shell
+    python src/scripts/import_project.py \
+    --project_name="My restored project" \
+    --input_path=backups/project_22_backup.json \
+    --input_pdf_dir=pdf_input/
+    ```
+    Note: The `dataset_name` parameter must match the value in the backup file or else the images will not load properly and the source storage must be manually configured.
 
 # Model evaluation
 
