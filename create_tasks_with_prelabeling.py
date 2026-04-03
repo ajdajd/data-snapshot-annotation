@@ -15,24 +15,17 @@ Usage::
 """
 
 import argparse
-from dotenv import load_dotenv
 import json
 import uuid
-import os
 from pathlib import Path
 
-from label_studio_sdk import LabelStudio
-from pdf2image import convert_from_path
-from tqdm.auto import tqdm
-
-from dsa.constants import ROOT
+from dsa.ls_helpers import (
+    LABEL_STUDIO_LOCAL_FILES_DOCUMENT_ROOT,
+    convert_pdfs_to_images,
+    create_project,
+    import_tasks_to_project,
+)
 from dsa.utils import load_json
-
-load_dotenv()
-API_KEY = os.getenv("LABELSTUDIO_API_KEY")
-LS_BASE_URL = "http://localhost:8080"
-BASE_HOST_PATH = "/data/local-files/?d="
-LABEL_STUDIO_LOCAL_FILES_DOCUMENT_ROOT = "labelstudio_data/"
 
 
 def _bbox_to_ls_result(
@@ -158,40 +151,6 @@ def _build_ls_predictions(
     return [{"result": results, "score": avg_score}]
 
 
-def _create_project(project_name):
-    # Initialize the client
-    client = LabelStudio(base_url=LS_BASE_URL, api_key=API_KEY)
-
-    # Load labeling template
-    with open(ROOT / "labeling_interface_template.xml", "r", encoding="utf-8") as f:
-        label_config = f.read()
-
-    # Create the project
-    project = client.projects.create(title=project_name, label_config=label_config)
-    print(f"Project created with ID: {project.id}")
-
-    return project.id
-
-
-def _create_tasks(project_id, task_json_path, dataset_name):
-    # Initialize the client
-    client = LabelStudio(base_url=LS_BASE_URL, api_key=API_KEY)
-
-    # Import tasks
-    payload = load_json(task_json_path)
-    client.projects.import_tasks(id=project_id, request=payload)
-
-    # Create local storage
-    path = f"/label-studio/data/{dataset_name}"
-    client.import_storage.local.create(
-        path=path, project=project_id, title=dataset_name
-    )
-
-    print(f"Succesfully imported tasks and set up local storage.")
-
-    return None
-
-
 def main(
     project_name: str,
     dataset_name: str,
@@ -210,44 +169,35 @@ def main(
 
     Parameters
     ----------
-    input_dir : str | Path
-        Directory containing PDF files to process.
+    project_name : str
+        Display name for the new Label Studio project.
     dataset_name : str
         Name for the output dataset directory under ``labelstudio_data/``.
+    input_pdf_dir : str | Path
+        Directory containing PDF files to process.
     pred_json_path : str | Path
         Path to the prediction JSON file conforming to the Unified
         Evaluation Schema v1.3.
     """
     dataset_dir = Path(LABEL_STUDIO_LOCAL_FILES_DOCUMENT_ROOT) / dataset_name
-    dataset_dir.mkdir(parents=True, exist_ok=True)
+
+    # Convert PDFs to page images
+    pages_by_file = convert_pdfs_to_images(input_pdf_dir, dataset_name)
 
     # Build prediction index from pred json file
     pred_json = load_json(pred_json_path)
     pred_index = _build_prediction_index(pred_json)
 
-    task_json = []
-    files = list(Path(input_pdf_dir).rglob("*.pdf"))
-    for f in tqdm(files):
-        # Save pages as PNG files
-        images = convert_from_path(pdf_path=f, dpi=300)
-        image_list = []
-        for idx, image in enumerate(images):
-            fname = f"{f.name}_p{idx:03d}.png"
-            image.save(dataset_dir / fname, "PNG")
-            page = f"{BASE_HOST_PATH}{dataset_name}/{fname}"
-            image_list.append(page)
-
-        # Build task json
-        doc_id = f.name
+    # Build task JSON with predictions
+    task_json: list[dict] = []
+    for doc_id, image_list in pages_by_file.items():
         ls_predictions = _build_ls_predictions(pred_index.get(doc_id, []))
         task: dict = {
             "data": {"pages": image_list},
-            "meta": {"file": f.name},
+            "meta": {"file": doc_id},
         }
         if ls_predictions:
-            # TODO: Parameterize bbox_type ("predictions" or "annotations") so we can reuse the function for loading saved progress
-            bbox_type = "predictions"
-            task[bbox_type] = ls_predictions
+            task["predictions"] = ls_predictions
         task_json.append(task)
 
     # Save task json file
@@ -256,8 +206,9 @@ def main(
         json.dump(task_json, f, indent=2)
     print(f"Wrote {len(task_json)} tasks to {task_json_path}")
 
-    project_id = _create_project(project_name)
-    _create_tasks(project_id, task_json_path, dataset_name)
+    # Create project and import tasks
+    project_id = create_project(project_name)
+    import_tasks_to_project(project_id, load_json(task_json_path), dataset_name)
 
     return None
 
