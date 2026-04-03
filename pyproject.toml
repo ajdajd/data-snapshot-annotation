@@ -40,7 +40,7 @@ viz = [
     "opencv-python",
 ]
 dev = [
-    "data-snapshot-annotation[tfid,doclayout_yolo,viz,yolo26]",
+    "data-snapshot-annotation[tfid,doclayout_yolo,viz,yolo11,yolo26]",
     "pytest==9.0.2",
     "black==25.1.0",
 ]
