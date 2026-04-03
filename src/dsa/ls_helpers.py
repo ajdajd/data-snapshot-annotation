@@ -14,13 +14,20 @@ from pdf2image import convert_from_path
 from tqdm.auto import tqdm
 
 from dsa.constants import ROOT
-from dsa.utils import load_json
 
 load_dotenv()
 
+API_KEY = os.getenv("LABELSTUDIO_API_KEY")
 LS_BASE_URL = "http://localhost:8080"
 BASE_HOST_PATH = "/data/local-files/?d="
 LABEL_STUDIO_LOCAL_FILES_DOCUMENT_ROOT = "labelstudio_data/"
+
+
+if not API_KEY:
+    raise ValueError(
+        "LABELSTUDIO_API_KEY environment variable is not set. "
+        "Please set it in your .env file."
+    )
 
 
 def get_client() -> LabelStudio:
@@ -30,19 +37,8 @@ def get_client() -> LabelStudio:
     -------
     LabelStudio
         An authenticated client instance.
-
-    Raises
-    ------
-    ValueError
-        If the ``LABELSTUDIO_API_KEY`` environment variable is not set.
     """
-    api_key = os.getenv("LABELSTUDIO_API_KEY")
-    if not api_key:
-        raise ValueError(
-            "LABELSTUDIO_API_KEY environment variable is not set. "
-            "Please set it in your .env file."
-        )
-    return LabelStudio(base_url=LS_BASE_URL, api_key=api_key)
+    return LabelStudio(base_url=LS_BASE_URL, api_key=API_KEY)
 
 
 def create_project(project_name: str) -> int:
