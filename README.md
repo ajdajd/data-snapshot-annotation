@@ -29,7 +29,19 @@ This repository consists of two parts:
     ```
 4. Open `http://localhost:8080/` on a web browser and create a login.
 
-## Adding an API key to the .env file
+## Other setup requirements
+
+### 1. Install dependencies
+1. Install the repository.
+    ```shell
+    pip install -e .
+    ```
+2. Install Poppler.
+    ```shell
+    sudo apt-get install poppler-utils
+    ```
+
+### 2. Add API key to the .env file
 
 1. Open Label Studio.
 2. At the top-left corner, click the hamburger menu (≡) and select `Organization`.
@@ -39,56 +51,29 @@ This repository consists of two parts:
 6. At the left menu, click `Legacy Token`.
 7. Copy the token and add it to the `.env` file.
 
-## Setting up an annotation project (manual)
-
-### 1. Pre-requisites
-
-1. Install dependencies.
-    ```shell
-    pip install .
-    ```
-2. Install Poppler.
-    ```shell
-    sudo apt-get install poppler-utils
-    ```
-
-### 2. Converting PDFs to images and creating tasks for Label Studio
-1. Add PDF files to the `pdf_input` directory.
-2. Run `python create_tasks.py --dataset_name={dataset}`. The `dataset_name` parameter may be set into any string.
-3. This will generate the following files into the `labelstudio_data/{dataset}` directory:
-    - Individual PNG files for each page of each PDF
-    - A `tasks.json` file.
-
-### 3. Creating an annotation project
-1. Setup the project.
-    1. Open Label Studio and click `Create Project`.
-    2. Fill out Project Name page.
-    3. In Data Import, click `Upload Files` and select the `tasks.json` generated in the previous section.
-    4. In Labeling Setup, select `Multi-page document annotation`.
-    5. Create label names. This can be edited later.
-    6. Click `Save`.
-2. Setup the dataset.
-    1. Go to the project's settings.
-    8. Select `Cloud Storage` > `Add Source Storage` > `Local Files` > `Next`.
-    9. Add a Storage Title.
-    10. In Absolute local path, replace `/label-studio/data/your-subdirectory` with `/label-studio/data/{dataset}`.
-    11. Click `Test Connection` > `Next`.
-    12. Import Method: `Tasks - Treat each JSON, JSONL, or Parquet...`
-    13. Click `Next` > `Save`. (Important: Do NOT click `Save & Sync`.)
-3. Go to the project tab. Each row (called a "task") should correspond to a PDF file to annotate.
-
-## Setting up an annotation project with pre-labeling
-1. Start Label Studio.
+## Setting up a new PDF annotation project
+1. Add PDF files to annotate in the `pdf_input` directory.
+2. Start Label Studio.
     ```shell
     docker compose up
     ```
+3. Run `create_tasks.py`. 
+    ```shell
+    python create_tasks.py \
+    --project_name="My annotation project"
+    --dataset_name=my_dataset
+    --input_pdf_dir=pdf_input/
+    ```
+4. Open Label Studio and refresh the web browser. The newly created project should appear.
+
+## Setting up a new PDF annotation project with pre-labeling
+1. Add PDF files to annotate in the `pdf_input` directory.
 2. Generate prediction file(s). See [Generating prediction files](#generating-prediction-files) for the list of supported models and installation info.
     ```shell
     python src/dsa/adapters/{adapter}.py \
     --input_pdf_dir=pdf_input/ \
     --output_json_path=data/evaluation_input/preds.json
     ```
-
 3. (Optional) Combine prediction files by assigning a class to a source.
     ```shell
     python src/scripts/combine_pred_files.py \
@@ -96,22 +81,26 @@ This repository consists of two parts:
     --table_preds=data/evaluation_input/preds2.json \
     --output_json_path=data/evaluation_input/combined_preds.json  
     ```
-
+3. Start Label Studio.
+    ```shell
+    docker compose up
+    ```
 4. Create project and tasks.
     ```shell
     python create_tasks_with_prelabeling.py \
-    --project_name="My project" \
-    --dataset_name=dataset \
+    --project_name="My project with prelabeling" \
+    --dataset_name=my_dataset \
     --input_pdf_dir=pdf_input/ \
     --pred_json_path=data/evaluation_input/preds.json
     ```
+5. Open Label Studio and refresh the web browser. The newly created project should appear.
 
 ## Backing up an annotation project
 1. Make sure Label Studio is started.
     ```shell
     docker compose up
     ```
-2. Run `export_project.py`.
+2. Run `export_project.py`. This will create the backup JSON file in the specified path.
     ```shell
     python src/scripts/export_project.py \
     --project_id=22 \
@@ -133,7 +122,9 @@ This repository consists of two parts:
     --input_path=backups/project_22_backup.json \
     --input_pdf_dir=pdf_input/
     ```
-    Note: The `dataset_name` parameter must match the value in the backup file or else the images will not load properly and the source storage must be manually configured.
+    Note: `dataset_name` is an optional parameter that must match the value in the backup file. If not specified, the script will infer it from the backup file. 
+    
+    If value is not correct, the images will not load properly and the source storage must be manually configured. See `docs/manual_setup.md` for instructions. 
 
 # Model evaluation
 
