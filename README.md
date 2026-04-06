@@ -43,7 +43,7 @@ This repository consists of two parts:
     sudo apt-get install poppler-utils
     ```
 
-### 2. Add API key to the .env file
+### 2. Add API key to the `.env` file
 
 1. Open Label Studio.
 2. At the top-left corner, click the hamburger menu (≡) and select `Organization`.
@@ -115,9 +115,9 @@ This repository consists of two parts:
 ## Restoring an annotation project
 
 1. Prepare the following files:
-    a. Backup JSON file (e.g., `backups/project_22_backup.json`)
-    b. PDF files (e.g., in `pdf_input/`)
-2. Make sure Label Studio is started.
+    1. Backup JSON file (e.g., `backups/project_22_backup.json`)
+    2. PDF files (e.g., in `pdf_input/`)
+2. Make sure Label Studio is started and an [API key is added to the `.env` file](#2-add-api-key-to-the-env-file).
     ```shell
     docker compose up
     ```
