@@ -124,7 +124,7 @@ def draw_objects(img, objects, color, source):
 def visualize_snapshots(
     gt_json_path: str,
     pred_json_path: str,
-    pdf_input_dir: str,
+    input_pdf_dir: str,
     output_dir: str,
 ):
     """Render visualization PNGs.
@@ -154,7 +154,7 @@ def visualize_snapshots(
     for doc in tqdm(gt["documents"]):
         doc_id = doc["doc_id"]
         doc_name = doc["doc_name"]
-        pdf_path = Path(pdf_input_dir) / doc_name
+        pdf_path = Path(input_pdf_dir) / doc_name
 
         if not pdf_path.exists():
             print(f"[WARN] Missing PDF: {pdf_path}")
@@ -219,7 +219,7 @@ if __name__ == "__main__":
     visualize_snapshots(
         gt_json_path=args.gt_json_path,
         pred_json_path=args.pred_json_path,
-        pdf_input_dir=args.pdf_input_dir,
+        input_pdf_dir=args.input_pdf_dir,
         output_dir=args.output_dir,
     )
 
