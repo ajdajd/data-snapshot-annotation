@@ -196,7 +196,7 @@ Supported models:
         ```shell
         pip install -e .[yolo11]
         ```
-  2. Run `yolo11.py`
+  2. Run `yolo11.py`.
         ```shell
         python src/dsa/adapters/yolo11.py \
         --input_pdf_dir=pdf_input/ \
@@ -207,7 +207,7 @@ Supported models:
         ```shell
         pip install -e .[yolo26]
         ```
-  2. Run `yolo26.py`
+  2. Run `yolo26.py`.
         ```shell
         python src/dsa/adapters/yolo26.py \
         --input_pdf_dir=pdf_input/ \
