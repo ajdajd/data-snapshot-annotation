@@ -15,14 +15,13 @@ import json
 from pathlib import Path
 from typing import Any
 
-from dsa.constants import LABEL_MAP, ROOT
+from dsa.constants import INPUT_PDF_DIR, LABEL_MAP, ROOT
 from dsa.utils import clamp01
 
 LS_EXPORT_JSON_PATH = (
     ROOT / "data/raw_input/project-22-at-2026-03-12-15-10-03fb0566.json"
 )
 OUTPUT_JSON_PATH = ROOT / "data/evaluation_input/ground_truth.json"
-PDF_INPUT_DIR = "pdf_input/"
 
 
 def _ls_rect_to_xyxy_norm(rect_value: dict[str, Any]) -> list[float]:
@@ -155,11 +154,11 @@ def convert_labelstudio_export_to_eval_v13(
         meta = task.get("meta") or {}
         doc_name = meta.get("file")
         doc_id = str(doc_name)
-        doc_path = PDF_INPUT_DIR + doc_name
+        doc_path = (INPUT_PDF_DIR / doc_name).resolve().relative_to(ROOT)
 
         if doc_id not in seen_docs:
             documents.append(
-                {"doc_id": doc_id, "doc_name": doc_name, "doc_path": doc_path}
+                {"doc_id": doc_id, "doc_name": doc_name, "doc_path": str(doc_path)}
             )
             seen_docs.add(doc_id)
 
@@ -298,6 +297,12 @@ if __name__ == "__main__":
         "--output_json_path",
         type=str,
         default=str(OUTPUT_JSON_PATH),
+        help="Destination path for the ground-truth JSON.",
+    )
+    parser.add_argument(
+        "--input_pdf_dir",
+        type=str,
+        default=str(INPUT_PDF_DIR),
         help="Destination path for the ground-truth JSON.",
     )
     parser.add_argument(
