@@ -21,7 +21,7 @@ from pdf2image import convert_from_path
 from tqdm.auto import tqdm
 from ultralytics import YOLO
 
-from dsa.constants import LABEL_MAP, MODELS_DIR, PDF_INPUT_DIR, ROOT
+from dsa.constants import INPUT_PDF_DIR, LABEL_MAP, MODELS_DIR, ROOT
 from dsa.utils import normalize_bboxes_xyxy, utc_now_iso
 
 MODEL_NAME = "Armaggheddon/yolo11-document-layout"
@@ -284,7 +284,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--input_pdf_dir",
         type=str,
-        default=str(PDF_INPUT_DIR),
+        default=str(INPUT_PDF_DIR),
         help="Directory of PDF files to process.",
     )
     parser.add_argument(

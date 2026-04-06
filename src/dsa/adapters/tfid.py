@@ -17,11 +17,10 @@ from PIL.Image import Image
 from tqdm.auto import tqdm
 from transformers import AutoModelForCausalLM, AutoProcessor
 
-from dsa.constants import LABEL_MAP, ROOT
+from dsa.constants import INPUT_PDF_DIR, LABEL_MAP, ROOT
 from dsa.utils import normalize_bboxes_xyxy, utc_now_iso
 
 MODEL_ID_DEFAULT = "yifeihu/TF-ID-large"
-INPUT_PDF_DIR = ROOT / "pdf_input"
 OUTPUT_JSON_PATH = ROOT / "data/evaluation_input/tfid-large.json"
 
 

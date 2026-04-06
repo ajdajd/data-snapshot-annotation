@@ -18,7 +18,7 @@ from tqdm.auto import tqdm
 from dsa.constants import (
     VP_GT_JSON_PATH,
     VP_PRED_JSON_PATH,
-    PDF_INPUT_DIR,
+    INPUT_PDF_DIR,
     GT_COLOR_BGR,
     PRED_COLOR_BGR,
     VP_OUTPUT_DIR,
@@ -205,8 +205,8 @@ if __name__ == "__main__":
         default=VP_PRED_JSON_PATH,
     )
     ap.add_argument(
-        "--pdf_input_dir",
-        default=PDF_INPUT_DIR,
+        "--input_pdf_dir",
+        default=INPUT_PDF_DIR,
         help="Path to directory of PDF files",
     )
     ap.add_argument(

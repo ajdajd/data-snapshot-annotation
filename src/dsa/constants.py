@@ -9,7 +9,7 @@ from pathlib import Path
 
 # Directories
 ROOT = Path(__file__).parent.parent.parent
-PDF_INPUT_DIR = ROOT / "pdf_input"
+INPUT_PDF_DIR = ROOT / "pdf_input"
 MODELS_DIR = ROOT / "models"
 
 # Canonical label map (Unified Evaluation Schema v1.3)

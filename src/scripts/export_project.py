@@ -8,7 +8,7 @@ Usage::
 
     python -m scripts.export_project \\
         --project_id=22 \\
-        --output_path=backups/project_22_backup.json
+        --output_path=data/backups/project_22_backup.json
 """
 
 import argparse

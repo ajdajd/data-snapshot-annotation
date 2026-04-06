@@ -26,7 +26,7 @@ from dsa.utils import normalize_bboxes_xyxy, utc_now_iso
 MODEL_NAME = "juliozhao/DocLayout-YOLO-DocStructBench"
 MODEL_FILENAME = "doclayout_yolo_docstructbench_imgsz1024.pt"
 MODEL_PATH_DEFAULT = MODELS_DIR / MODEL_FILENAME
-OUTPUT_JSON_PATH = ROOT / "data/evaluation_input/DocLayout-YOLO-DocStructBench.json"
+OUTPUT_JSON_PATH = ROOT / "data/evaluation_input/doclayoutyolo.json"
 IMGSZ = 1024
 
 # DocLayout-YOLO / DocStructBench class names that map to our canonical labels.
