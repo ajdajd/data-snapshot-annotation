@@ -33,4 +33,4 @@ PRED_COLOR_BGR = (64, 64, 255)  # red
 VP_OUTPUT_DIR = ROOT / "data/visualize_pages/"
 
 # Adapters
-MIN_PREDICTION_AREA = 0.00002
+MIN_PREDICTION_AREA = 0.006
