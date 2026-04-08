@@ -18,7 +18,7 @@ from tqdm.auto import tqdm
 from transformers import AutoModelForCausalLM, AutoProcessor
 
 from dsa.constants import INPUT_PDF_DIR, LABEL_MAP, ROOT
-from dsa.utils import normalize_bboxes_xyxy, utc_now_iso
+from dsa.utils import filter_small_predictions, normalize_bboxes_xyxy, utc_now_iso
 
 MODEL_ID_DEFAULT = "yifeihu/TF-ID-large"
 OUTPUT_JSON_PATH = ROOT / "data/evaluation_input/tfid-large.json"
@@ -194,6 +194,9 @@ class TFIDConfig:
         Resolution for PDF-to-image rendering.
     store_doc_path_as : str
         How to record document paths: ``"relative"`` or ``"absolute"``.
+    filter_small : bool
+        If ``True``, discard predictions whose normalised bounding-box area
+        is below ``MIN_PREDICTION_AREA``.
     """
 
     def __init__(
@@ -202,11 +205,13 @@ class TFIDConfig:
         device: str = "cpu",
         dpi: int = 300,
         store_doc_path_as: str = "relative",
+        filter_small: bool = True,
     ) -> None:
         self.model_id = model_id
         self.device = device
         self.dpi = dpi
         self.store_doc_path_as = store_doc_path_as
+        self.filter_small = filter_small
 
 
 def run_tfid_adapter_directory(
@@ -323,6 +328,9 @@ def run_tfid_adapter_directory(
                     }
                 )
 
+            if cfg.filter_small:
+                objects = filter_small_predictions(objects)
+
             if not objects:
                 continue
 
@@ -381,6 +389,12 @@ if __name__ == "__main__":
         default="relative",
     )
     parser.add_argument("--model_id", type=str, default=MODEL_ID_DEFAULT)
+    parser.add_argument(
+        "--filter_small_predictions",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Filter out predictions with very small bounding-box area.",
+    )
     args = parser.parse_args()
 
     pdf_dir = Path(args.input_pdf_dir)
@@ -393,6 +407,7 @@ if __name__ == "__main__":
         device=args.device,
         dpi=args.dpi,
         store_doc_path_as=args.store_doc_path_as,
+        filter_small=args.filter_small_predictions,
     )
 
     out_path = run_tfid_adapter_directory(

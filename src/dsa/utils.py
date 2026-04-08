@@ -9,6 +9,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Sequence
 
+from dsa.constants import MIN_PREDICTION_AREA
+
 
 def load_json(path: str | Path) -> dict:
     """Load and return a JSON file as a dictionary.
@@ -131,3 +133,35 @@ def normalize_bboxes_xyxy(
 
         out.append([nx1, ny1, nx2, ny2])
     return out
+
+
+def filter_small_predictions(
+    objects: list[dict[str, Any]],
+    min_area: float = MIN_PREDICTION_AREA,
+) -> list[dict[str, Any]]:
+    """Remove predictions whose normalized bounding-box area is below a threshold.
+
+    This filters out spurious, near-zero-area detections that are unlikely to
+    represent meaningful page elements.
+
+    Parameters
+    ----------
+    objects : list[dict[str, Any]]
+        Prediction objects, each containing a ``"bbox"`` key with normalised
+        ``[x1, y1, x2, y2]`` coordinates in the ``[0, 1]`` range.
+    min_area : float
+        Minimum normalised area (width × height) a prediction must have to be
+        kept.
+
+    Returns
+    -------
+    list[dict[str, Any]]
+        Filtered list retaining only predictions whose area ≥ *min_area*.
+    """
+    kept: list[dict[str, Any]] = []
+    for obj in objects:
+        x1, y1, x2, y2 = obj["bbox"]
+        area = abs(x2 - x1) * abs(y2 - y1)
+        if area >= min_area:
+            kept.append(obj)
+    return kept

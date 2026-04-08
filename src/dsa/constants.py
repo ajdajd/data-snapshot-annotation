@@ -31,3 +31,6 @@ VP_PRED_JSON_PATH = ROOT / "data/evaluation_input/DocLayout-YOLO-DocStructBench.
 GT_COLOR_BGR = (64, 150, 27)  # green
 PRED_COLOR_BGR = (64, 64, 255)  # red
 VP_OUTPUT_DIR = ROOT / "data/visualize_pages/"
+
+# Adapters
+MIN_PREDICTION_AREA = 0.00002
