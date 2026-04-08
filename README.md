@@ -105,7 +105,8 @@ This repository consists of two parts:
     ```shell
     docker compose up
     ```
-2. Run `export_project.py`. This will create the backup JSON file in the specified path.
+2. Before exporting, make sure all annotations are submitted and that there are no drafts. You check this by going to the project page and filter for tasks where drafts exist.
+3. Run `export_project.py`. This will create the backup JSON file in the specified path.
     ```shell
     python src/scripts/export_project.py \
     --project_id=22 \
