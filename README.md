@@ -148,7 +148,7 @@ To run an evaluation, run `evaluate_model.py`.
 python src/dsa/evaluate_model.py \
 --gt_json_path=path/to/ground_truth.json \
 --pred_json_path=path/to/preds.json \
---output_report_path=data/evaluation_output/report.json \
+--output_report_path=data/evaluation_output/report.json
 ```
 
 ## Pre-requisites
