@@ -221,14 +221,7 @@ def combine_batch_predictions(
     )
 
 
-def parse_args() -> argparse.Namespace:
-    """Parse command-line arguments.
-
-    Returns
-    -------
-    argparse.Namespace
-        Parsed arguments with ``input_dir`` and ``output_json`` attributes.
-    """
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description=(
             "Combine multiple batch prediction JSON files from a directory "
@@ -248,11 +241,7 @@ def parse_args() -> argparse.Namespace:
         required=True,
         help="Destination path for the combined prediction JSON file.",
     )
-    return parser.parse_args()
-
-
-if __name__ == "__main__":
-    args = parse_args()
+    args = parser.parse_args()
     combine_batch_predictions(
         input_dir=args.input_dir,
         output_json_path=args.output_json,

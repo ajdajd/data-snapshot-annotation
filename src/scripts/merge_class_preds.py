@@ -206,15 +206,7 @@ def combine_predictions(
     )
 
 
-def parse_args() -> argparse.Namespace:
-    """Parse command-line arguments.
-
-    Returns
-    -------
-    argparse.Namespace
-        Parsed arguments with ``figure_preds``, ``table_preds``, and
-        ``output_json_path`` attributes.
-    """
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description=(
             "Combine two prediction JSON files by selecting Figure objects "
@@ -239,11 +231,7 @@ def parse_args() -> argparse.Namespace:
         required=True,
         help="Destination path for the merged prediction JSON file.",
     )
-    return parser.parse_args()
-
-
-if __name__ == "__main__":
-    args = parse_args()
+    args = parser.parse_args()
     combine_predictions(
         figure_preds_path=args.figure_preds,
         table_preds_path=args.table_preds,
