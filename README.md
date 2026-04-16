@@ -158,9 +158,8 @@ python src/dsa/evaluate_model.py \
     pip install -e .
     ```
 2. Generate ground truth file `ground_truth.json` from human annotations.
-    1. Open Label Studio and select the project.
-    2. Export using JSON format.
-    3. Run `labelstudio.py`. Make sure to point `input_json_path` to the file generated from the previous step.
+    1. Export annotations by following the [backup procedure](#backing-up-an-annotation-project).
+    2. Run `labelstudio.py`. Make sure to point `input_json_path` to the file generated from the previous step.
         ```shell
         python src/dsa/adapters/labelstudio.py \
         --input_json_path=path/to/exported_json \
