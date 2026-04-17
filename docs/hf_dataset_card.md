@@ -116,7 +116,7 @@ Currently, the dataset is provided as a single, unified corpus without predefine
 The annotations were produced through human labeling to define snapshot class (Figure / Table) and bounding boxes.
 
 ## Licensing Information
-[To be provided manually]
+[TBD]
 
 ## Citation Information
-[To be provided manually]
+[TBD]
