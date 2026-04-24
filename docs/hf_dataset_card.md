@@ -15,45 +15,45 @@ size_categories:
 - n<1K
 ---
 
-# Dataset Card for data-snapshot_unhcr
+# Dataset card for data-snapshot
 
-## Dataset Summary
-The `data-snapshot_unhcr` dataset is an annotated corpus designed for the evaluation and development of models for extracting *data snapshots* from PDF documents. A **data snapshot** is defined as a figure or table that contains quantitative data derived from statistics, indicators, or structured data sources.
+## Dataset summary
+The `data-snapshot` dataset is an annotated corpus designed for the evaluation and development of models for extracting *data snapshots* from PDF documents. A **data snapshot** is defined as a figure or table that contains quantitative data derived from statistics, indicators, or structured data sources.
 
-## Dataset Structure
+## Dataset structure
 
 The repository is organized as follows:
 
 ```
-ai4data/data-snapshot_unhcr/
-├── annotations/                                                                # Contains annotation files per document
-│   ├── 1_advocacy_note_mineaction_-_niger_eng_annotations.json
-│   ├── 1_note_plaidoyer_lutte_antimines_-_niger_fr_annotations.json
-│   ├── 2_note_danalyse_de_protection_-_retour_de_pdi_a_teguy_annotations.json
-│   ├── ...
-├── annotations_combined.json                                                   # Combined annotations into 1 JSON file
-├── data-snapshot-eval-v1.3.schema.json                                         # Provides the schema of the annotation file
-├── metadata/                                                                   # Document-level metadata
-│   ├── 1_advocacy_note_mineaction_-_niger_eng_metadata.json
-│   ├── 1_note_plaidoyer_lutte_antimines_-_niger_fr_metadata.json
-│   ├── 2_note_danalyse_de_protection_-_retour_de_pdi_a_teguy_metadata.json
-│   ├── ...
-└── pdf_input/                                                                  # Raw PDFs (338 files)
-    ├── 1_advocacy_note_mineaction_-_niger_eng.pdf
-    ├── 1_note_plaidoyer_lutte_antimines_-_niger_fr.pdf
-    ├── 2_note_danalyse_de_protection_-_retour_de_pdi_a_teguy.pdf
-    ├── ...
+ai4data/data-snapshot/
+├── annotations/<source>/per_document/*.json    # Contains annotation files per document
+├── annotations/<source>/combined/*.json        # Combined annotations into 1 JSON file per source
+├── documents/<source>/*.pdf                    # Raw PDFs
+├── metadata/<source>/*.json                    # Document-level metadata
+├── schemas/data-snapshot-eval-v1.3.schema.json # Provides the schema of the annotation file					
+└── README.md
 ```
 
-### Data Fields
-- **annotations**: Contains the JSON annotation files formatting the bounding box locations (in normalized `[x1, y1, x2, y2]` format, top-left origin), object class (Figure / Table), and snapshot existence. Follows the schema provided in `data-snapshot-eval-v1.3.schema.json`.
-- **pdf_input**: The original PDF document files that correspond to the annotations.
+### Subsets
+- `annotations`
+  - JSON files that indicate the data snapshots: their object class (Figure / Table) and bounding box locations (in normalized `[x1, y1, x2, y2]` format, top-left origin)
+  - Follows the schema provided in `data-snapshot-eval-v1.3.schema.json`
+  - Provided on a per-document basis or a combined JSON file per source
+- `metadata`
+  - Provided on a per-document basis
+- `pdf_input`
+  - The original PDF document files that correspond to the annotations.
+
+### Sources
+- UNHCR
+- PRWP (WIP)
+- Refugee (WIP)
 
 ## Schema
 
 The annotation files follow the **Data Snapshot Evaluation Format (v1.3)**. Below is a simplified, human-readable example of the JSON schema with explanatory comments for each field.
 
-> **Note**: You will notice a top-level field called `"predictions"`. In the context of this dataset, this is a misnomer because these are actually human-labeled **annotations** (ground truth). We use the key `"predictions"` because we borrow this schema directly from the project's evaluation codebase, which uses a unified structure for both ground truth and model predictions.
+> **Note**: You will notice a top-level field called `predictions`. In the context of this dataset, this is a misnomer because these are actually human-labeled **annotations** (ground truth). We use the key `predictions` because we borrow this schema from the project's evaluation codebase, which uses a unified structure for both ground truth and model predictions.
 
 ```json
 {
@@ -85,13 +85,13 @@ The annotation files follow the **Data Snapshot Evaluation Format (v1.3)**. Belo
     }
   ],
   
-  // Per-page container of objects (Note: These contain the ground truth annotations)
+  // Per-page container of objects; these contain the ground truth annotations
   "predictions": [
     {
       "page_id": "1_advocacy_note_mineaction_-_niger_eng.pdf::p001",
       "doc_id": "1_advocacy_note_mineaction_-_niger_eng.pdf",
       "page_index": 0,  // 0-indexed page number
-      // Image data for Label Studio
+      // Image data for Label Studio (ignore this)
       "image": {
         "width_px": 2481,
         "height_px": 3508,
@@ -109,14 +109,11 @@ The annotation files follow the **Data Snapshot Evaluation Format (v1.3)**. Belo
 }
 ```
 
-### Data Splits
-Currently, the dataset is provided as a single, unified corpus without predefined `train`, `validation`, or `test` splits. 
+## Dataset creation
+The annotations were produced through human labeling using Label Studio.
 
-## Dataset Creation
-The annotations were produced through human labeling to define snapshot class (Figure / Table) and bounding boxes.
-
-## Licensing Information
+## Licensing information
 [TBD]
 
-## Citation Information
+## Citation information
 [TBD]
