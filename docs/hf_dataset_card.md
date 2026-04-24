@@ -41,8 +41,6 @@ ai4data/data-snapshot/
   - Provided on a per-document basis or a combined JSON file per source
 - `metadata`
   - Provided on a per-document basis
-- `pdf_input`
-  - The original PDF document files that correspond to the annotations.
 
 ### Sources
 - UNHCR
