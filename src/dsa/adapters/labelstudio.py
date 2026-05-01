@@ -300,12 +300,6 @@ if __name__ == "__main__":
         help="Destination path for the ground-truth JSON.",
     )
     parser.add_argument(
-        "--input_pdf_dir",
-        type=str,
-        default=str(INPUT_PDF_DIR),
-        help="Destination path for the ground-truth JSON.",
-    )
-    parser.add_argument(
         "--dataset_id",
         type=str,
         default="labelstudio_export",
