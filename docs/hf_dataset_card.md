@@ -13,6 +13,23 @@ language:
 - es
 size_categories:
 - n<1K
+configs:
+- config_name: annotations
+  data_files:
+  - split: unhcr
+    path: "annotations/unhcr/*.json"
+  - split: prwp
+    path: "annotations/prwp/*.json"
+  - split: refugee
+    path: "annotations/refugee/*.json"
+- config_name: metadata
+  data_files:
+  - split: unhcr
+    path: "metadata/unhcr/*.json"
+  - split: prwp
+    path: "metadata/prwp/*.json"
+  - split: refugee
+    path: "metadata/refugee/*.json"
 ---
 
 # Dataset card for data-snapshot
@@ -26,9 +43,7 @@ The repository is organized as follows:
 
 ```
 ai4data/data-snapshot/
-├── annotations/<source>/per_document/*.json    # Contains annotation files per document
-├── annotations/<source>/combined/*.json        # Combined annotations into 1 JSON file per source
-├── documents/<source>/*.pdf                    # Raw PDFs
+├── annotations/<source>/*.json                 # Contains annotation files per document
 ├── metadata/<source>/*.json                    # Document-level metadata
 ├── schemas/data-snapshot-eval-v1.3.schema.json # Provides the schema of the annotation file					
 └── README.md
