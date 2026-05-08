@@ -140,7 +140,7 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    # doclayoutyolo_runner(args.source, args.batch_start, args.batch_end)
-    # yolo11_runner(args.source, args.batch_start, args.batch_end)
+    doclayoutyolo_runner(args.source, args.batch_start, args.batch_end)
+    yolo11_runner(args.source, args.batch_start, args.batch_end)
     yolo26_runner(args.source, args.batch_start, args.batch_end)
     tfid_batch_runner(args.source, args.batch_start, args.batch_end)
