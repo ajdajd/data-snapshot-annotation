@@ -443,6 +443,15 @@ def print_summary_metrics(output_report_path: str | Path, iou_threshold: float) 
             f"|                  | Area recall    | {class_metrics['mean_area_recall']:.3f} |"
         )
 
+    # Object counts
+    for lab in ["Figure", "Table"]:
+        class_metrics = per_class.get(lab)
+        if not class_metrics:
+            continue
+
+        object_count = class_metrics["tp"] + class_metrics["fn"]
+        print(f"{lab} count: {object_count}")
+
 
 def evaluate(
     gt_json_path: str | Path,
