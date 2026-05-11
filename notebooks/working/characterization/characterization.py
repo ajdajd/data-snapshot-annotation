@@ -59,6 +59,7 @@ def analyze_snapshot(
     model: str = "gpt-4o-mini",
     max_output_tokens: int = 300,
 ) -> dict:
+    client = OpenAI(api_key=api_key)
 
     response = client.responses.create(
         model=model,
