@@ -217,15 +217,70 @@ We used the medium variant for the benchmarks in this paper.
 
 ## 6.1 Overall Detection Performance
 
-[PLACEHOLDER — Main Results Table]
+[PLACEHOLDER — Main Results Table combined across corpora]
 
 ## 6.2 Spatial Extraction Quality
 
-[PLACEHOLDER — Spatial Metrics Table]
+[PLACEHOLDER — Spatial Metrics Table combined across corpora]
 
-## 6.3 Domain-Wise Performance
+## 6.3 Split by corpus
 
-[PLACEHOLDER — Corpus-Specific Results Table]
+### 6.3.1 UNHCR / ReliefWeb
+Figure
+|     Category     |                | TF-ID-Large | DocLayout-YOLO | YOLOv11 medium | YOLOv26 medium |
+|:----------------:|----------------|:-----------:|:--------------:|:--------------:|:--------------:|
+| Detection        | Precision      |       0.614 |          0.549 |          0.399 |          0.398 |
+|                  | Recall         |       0.435 |          0.794 |          0.758 |          0.709 |
+| Spatial Accuracy | IoU            |       0.867 |          0.822 |          0.819 |          0.818 |
+|                  | Area precision |       0.922 |          0.995 |          0.988 |          0.989 |
+|                  | Area recall    |       0.941 |          0.826 |          0.829 |          0.829 |
+
+Table
+|     Category     |                | TF-ID-Large | DocLayout-YOLO | YOLOv11 medium | YOLOv26 medium |
+|:----------------:|----------------|:-----------:|:--------------:|:--------------:|:--------------:|
+| Detection        | Precision      |       0.460 |          0.510 |          0.462 |          0.408 |
+|                  | Recall         |       0.826 |          0.947 |          0.936 |          0.936 |
+| Spatial Accuracy | IoU            |       0.913 |          0.855 |          0.838 |          0.849 |
+|                  | Area precision |       0.969 |          0.997 |          0.994 |          0.999 |
+|                  | Area recall    |       0.942 |          0.858 |          0.844 |          0.850 |
+
+### 6.3.2 PRWP
+Figure
+|     Category     |                | TF-ID-Large | DocLayout-YOLO | YOLOv11 medium | YOLOv26 medium |
+|:----------------:|----------------|:-----------:|:--------------:|:--------------:|:--------------:|
+| Detection        | Precision      |       0.708 |          0.596 |          0.398 |          0.377 |
+|                  | Recall         |       0.784 |          0.838 |          0.808 |          0.826 |
+| Spatial Accuracy | IoU            |       0.911 |          0.803 |          0.820 |          0.832 |
+|                  | Area precision |       0.968 |          0.999 |          0.998 |          0.993 |
+|                  | Area recall    |       0.940 |          0.804 |          0.822 |          0.838 |
+
+Table
+|     Category     |                | TF-ID-Large | DocLayout-YOLO | YOLOv11 medium | YOLOv26 medium |
+|:----------------:|----------------|:-----------:|:--------------:|:--------------:|:--------------:|
+| Detection        | Precision      |       0.817 |          0.703 |          0.703 |          0.673 |
+|                  | Recall         |       0.952 |          0.904 |          0.896 |          0.904 |
+| Spatial Accuracy | IoU            |       0.954 |          0.822 |          0.806 |          0.811 |
+|                  | Area precision |       0.988 |          0.999 |          0.999 |          0.999 |
+|                  | Area recall    |       0.966 |          0.823 |          0.807 |          0.812 |
+
+### 6.3.3 Refugee PADs
+Figure
+|     Category     |                | TF-ID-Large | DocLayout-YOLO | YOLOv11 medium | YOLOv26 medium |
+|:----------------:|----------------|:-----------:|:--------------:|:--------------:|:--------------:|
+| Detection        | Precision      |       0.432 |          0.331 |          0.098 |          0.128 |
+|                  | Recall         |       0.661 |          0.919 |          0.694 |          0.548 |
+| Spatial Accuracy | IoU            |       0.919 |          0.885 |          0.814 |          0.851 |
+|                  | Area precision |       0.964 |          0.998 |          0.998 |          0.985 |
+|                  | Area recall    |       0.954 |          0.887 |          0.815 |          0.865 |
+
+Table
+|     Category     |                | TF-ID-Large | DocLayout-YOLO | YOLOv11 medium | YOLOv26 medium |
+|:----------------:|----------------|:-----------:|:--------------:|:--------------:|:--------------:|
+| Detection        | Precision      |       0.423 |          0.305 |          0.337 |          0.324 |
+|                  | Recall         |       0.776 |          0.831 |          0.760 |          0.817 |
+| Spatial Accuracy | IoU            |       0.886 |          0.852 |          0.825 |          0.839 |
+|                  | Area precision |       0.959 |          0.981 |          0.992 |          0.985 |
+|                  | Area recall    |       0.926 |          0.870 |          0.832 |          0.852 |
 
 ## 6.4 Qualitative Examples
 
