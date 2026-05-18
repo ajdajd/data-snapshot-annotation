@@ -98,4 +98,4 @@ models/
 notebooks/data/
 notebooks/annotation_corpus/
 scratch/
-notebooks/working/characterization/data/
+notebooks/working/characterization/*/data/
