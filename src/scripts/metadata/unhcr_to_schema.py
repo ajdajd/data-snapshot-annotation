@@ -32,6 +32,7 @@ from typing import Any
 from countrycode import countrycode
 from tqdm.auto import tqdm
 
+
 # ------------------------------------------------------------------------------
 # Constants
 # ------------------------------------------------------------------------------
@@ -399,15 +400,26 @@ def unhcr_to_schema(
     ]
 
     # --- Additional (UNHCR-specific) ---
-    additional: dict[str, Any] = {}
-    if report_url:
-        additional["additional.unhcr_report_url"] = report_url
-    if doc_type:
-        additional["additional.unhcr_format"] = doc_type
-    if disasters:
-        additional["additional.unhcr_disasters"] = disasters
-    if disaster_types:
-        additional["additional.unhcr_disaster_types"] = disaster_types
+    # Always emit ALL keys with defaults to ensure a uniform Arrow struct
+    # schema across files (required by HuggingFace dataset streaming).
+    additional: dict[str, Any] = {
+        "additional.unhcr_report_url": report_url,
+        "additional.unhcr_title": title,
+        "additional.unhcr_format": doc_type,
+        "additional.unhcr_sources": sources,
+        "additional.unhcr_posted": _clean_text(doc.get("Posted", "")),
+        "additional.unhcr_originally_published": _clean_text(
+            doc.get("Originally published", "")
+        ),
+        "additional.unhcr_origin": _clean_text(doc.get("Origin", "")),
+        "additional.unhcr_primary_country": primary_countries,
+        "additional.unhcr_other_countries": other_countries,
+        "additional.unhcr_themes": themes,
+        "additional.unhcr_languages": languages,
+        "additional.unhcr_disasters": disasters,
+        "additional.unhcr_disaster_types": disaster_types,
+        "additional.unhcr_pdf_url": pdf_url,
+    }
 
     # --- Build output ---
     result: dict[str, Any] = {
@@ -473,6 +485,11 @@ def main(input_dir: str, output_dir: str) -> None:
             errors += 1
 
     print(f"\nDone: {success} converted, {errors} errors")
+    print(
+        "\nREMINDER: Run enforce_metadata_schema.py with ALL subsets "
+        "(--input_dir for each) to unify schemas before uploading to "
+        "HuggingFace."
+    )
 
 
 if __name__ == "__main__":
