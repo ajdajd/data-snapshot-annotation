@@ -221,29 +221,29 @@ We used the medium variant for the benchmarks in this paper.
 
 |     Category     |     Metric     | TF-ID-Large | DocLayout-YOLO | YOLOv11 medium | YOLOv26 medium |
 |:----------------:|:--------------:|:-----------:|:--------------:|:--------------:|:--------------:|
-| Detection        | Precision      |       0.614 |          0.542 |          0.373 |          0.381 |
-|                  | Recall         |       0.465 |          0.801 |          0.759 |          0.713 |
-| Spatial accuracy | IoU            |       0.874 |          0.822 |          0.819 |          0.820 |
-|                  | Area precision |       0.929 |          0.996 |          0.989 |          0.989 |
-|                  | Area recall    |       0.941 |          0.826 |          0.829 |          0.830 |
+| Detection        | Precision      |       0.628 |          0.547 |          0.378 |          0.388 |
+|                  | Recall         |       0.488 |          0.802 |          0.761 |          0.721 |
+| Spatial Accuracy | IoU            |       0.877 |          0.820 |          0.817 |          0.817 |
+|                  | Area precision |       0.935 |          0.996 |          0.990 |          0.990 |
+|                  | Area recall    |       0.938 |          0.824 |          0.826 |          0.826 |
 
 ### 6.1.1 Table
 |     Category     |     Metric     | TF-ID-Large | DocLayout-YOLO | YOLOv11 medium | YOLOv26 medium |
 |:----------------:|:--------------:|:-----------:|:--------------:|:--------------:|:--------------:|
-| Detection        | Precision      |       0.502 |          0.417 |          0.434 |          0.403 |
-|                  | Recall         |       0.834 |          0.883 |          0.845 |          0.874 |
-| Spatial accuracy | IoU            |       0.913 |          0.845 |          0.824 |          0.835 |
-|                  | Area precision |       0.970 |          0.991 |          0.994 |          0.993 |
-|                  | Area recall    |       0.942 |          0.854 |          0.829 |          0.841 |
+| Detection        | Precision      |       0.562 |          0.468 |          0.487 |          0.460 |
+|                  | Recall         |       0.861 |          0.893 |          0.862 |          0.891 |
+| Spatial Accuracy | IoU            |       0.919 |          0.834 |          0.817 |          0.824 |
+|                  | Area precision |       0.972 |          0.993 |          0.994 |          0.994 |
+|                  | Area recall    |       0.946 |          0.841 |          0.822 |          0.829 |
 
-## 6.2 Split by corpus
+## 6.2 Split by Corpus
 
 ### 6.2.1 UNHCR / ReliefWeb
 
 #### 6.2.1.1 Figure
 
 |     Category     |     Metric     | TF-ID-Large | DocLayout-YOLO | YOLOv11 medium | YOLOv26 medium |
-|:----------------:|----------------|:-----------:|:--------------:|:--------------:|:--------------:|
+|:----------------:|:--------------:|:-----------:|:--------------:|:--------------:|:--------------:|
 | Detection        | Precision      |       0.614 |          0.549 |          0.399 |          0.398 |
 |                  | Recall         |       0.435 |          0.794 |          0.758 |          0.709 |
 | Spatial Accuracy | IoU            |       0.867 |          0.822 |          0.819 |          0.818 |
@@ -253,7 +253,7 @@ We used the medium variant for the benchmarks in this paper.
 #### 6.2.1.2 Table
 
 |     Category     |     Metric     | TF-ID-Large | DocLayout-YOLO | YOLOv11 medium | YOLOv26 medium |
-|:----------------:|----------------|:-----------:|:--------------:|:--------------:|:--------------:|
+|:----------------:|:--------------:|:-----------:|:--------------:|:--------------:|:--------------:|
 | Detection        | Precision      |       0.460 |          0.510 |          0.462 |          0.408 |
 |                  | Recall         |       0.826 |          0.947 |          0.936 |          0.936 |
 | Spatial Accuracy | IoU            |       0.913 |          0.855 |          0.838 |          0.849 |
@@ -265,29 +265,29 @@ We used the medium variant for the benchmarks in this paper.
 #### 6.2.2.1 Figure
 
 |     Category     |     Metric     | TF-ID-Large | DocLayout-YOLO | YOLOv11 medium | YOLOv26 medium |
-|:----------------:|----------------|:-----------:|:--------------:|:--------------:|:--------------:|
-| Detection        | Precision      |       0.708 |          0.596 |          0.398 |          0.377 |
-|                  | Recall         |       0.784 |          0.838 |          0.808 |          0.826 |
-| Spatial Accuracy | IoU            |       0.911 |          0.803 |          0.820 |          0.832 |
-|                  | Area precision |       0.968 |          0.999 |          0.998 |          0.993 |
-|                  | Area recall    |       0.940 |          0.804 |          0.822 |          0.838 |
+|:----------------:|:--------------:|:-----------:|:--------------:|:--------------:|:--------------:|
+| Detection        | Precision      |       0.737 |          0.607 |          0.431 |          0.430 |
+|                  | Recall         |       0.802 |          0.829 |          0.794 |          0.829 |
+| Spatial Accuracy | IoU            |       0.904 |          0.794 |          0.804 |          0.806 |
+|                  | Area precision |       0.976 |          0.998 |          0.998 |          0.996 |
+|                  | Area recall    |       0.925 |          0.796 |          0.806 |          0.810 |
 
 #### 6.2.2.2 Table
 
 |     Category     |     Metric     | TF-ID-Large | DocLayout-YOLO | YOLOv11 medium | YOLOv26 medium |
-|:----------------:|----------------|:-----------:|:--------------:|:--------------:|:--------------:|
-| Detection        | Precision      |       0.817 |          0.703 |          0.703 |          0.673 |
-|                  | Recall         |       0.952 |          0.904 |          0.896 |          0.904 |
-| Spatial Accuracy | IoU            |       0.954 |          0.822 |          0.806 |          0.811 |
-|                  | Area precision |       0.988 |          0.999 |          0.999 |          0.999 |
-|                  | Area recall    |       0.966 |          0.823 |          0.807 |          0.812 |
+|:----------------:|:--------------:|:-----------:|:--------------:|:--------------:|:--------------:|
+| Detection        | Precision      |       0.797 |          0.689 |          0.698 |          0.694 |
+|                  | Recall         |       0.941 |          0.914 |          0.902 |          0.924 |
+| Spatial Accuracy | IoU            |       0.942 |          0.812 |          0.802 |          0.802 |
+|                  | Area precision |       0.982 |          0.998 |          0.996 |          0.997 |
+|                  | Area recall    |       0.960 |          0.813 |          0.805 |          0.804 |
 
 ### 6.2.3 Refugee PADs
 
 #### 6.2.3.1 Figure
 
 |     Category     |     Metric     | TF-ID-Large | DocLayout-YOLO | YOLOv11 medium | YOLOv26 medium |
-|:----------------:|----------------|:-----------:|:--------------:|:--------------:|:--------------:|
+|:----------------:|:--------------:|:-----------:|:--------------:|:--------------:|:--------------:|
 | Detection        | Precision      |       0.432 |          0.331 |          0.098 |          0.128 |
 |                  | Recall         |       0.661 |          0.919 |          0.694 |          0.548 |
 | Spatial Accuracy | IoU            |       0.919 |          0.885 |          0.814 |          0.851 |
@@ -297,7 +297,7 @@ We used the medium variant for the benchmarks in this paper.
 #### 6.2.3.1 Table
 
 |     Category     |     Metric     | TF-ID-Large | DocLayout-YOLO | YOLOv11 medium | YOLOv26 medium |
-|:----------------:|----------------|:-----------:|:--------------:|:--------------:|:--------------:|
+|:----------------:|:--------------:|:-----------:|:--------------:|:--------------:|:--------------:|
 | Detection        | Precision      |       0.423 |          0.305 |          0.337 |          0.324 |
 |                  | Recall         |       0.776 |          0.831 |          0.760 |          0.817 |
 | Spatial Accuracy | IoU            |       0.886 |          0.852 |          0.825 |          0.839 |
