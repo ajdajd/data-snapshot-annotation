@@ -100,10 +100,23 @@ ai4data/data-snapshot/
 ### Metadata
 
 ```python
->>> from datasets import load_dataset
 >>> metadata = load_dataset("ajdajd/data-snapshot", name="metadata", split="unhcr")
 >>> metadata[0]  # Inspect the first record
 {'type': 'document', 'metadata_information': {'title': 'Lebanon: Baalbek-Hermel Governorate Profile (June 2015)', 'idno': '06072015-baalbek-hermelgovernorateprofile', 'producers': [{'name': 'UNHCR', 'abbr': 'UNHCR', 'affiliation': 'UNHCR', 'role': 'Source'}], 'production_date': datetime.datetime(2026, 5, 21, 0, 0), ...}
+```
+
+### Documents
+
+```python
+>>> docs = load_dataset("ajdajd/data-snapshot", data_dir="documents/unhcr")  # Or simply data_dir="documents/" for all files
+>>> docs.save_to_disk("path/to/docs_directory")  # Files are saved as an Arrow file
+```
+
+### Snapshots
+
+```python
+>>> snapshots = load_dataset("ajdajd/data-snapshot", data_dir="snapshots/unhcr")  # Or simply data_dir="snapshots/" for all snapshots
+>>> snapshots.save_to_disk("path/to/snapshots_directory")  # Files are saved as an Arrow file
 ```
 
 ## Schema
