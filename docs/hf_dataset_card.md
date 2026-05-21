@@ -86,6 +86,26 @@ ai4data/data-snapshot/
 - PRWP
 - Refugee
 
+## Loading the dataset using HF's `datasets` library
+
+### Annotations
+
+```python
+>>> from datasets import load_dataset
+>>> annotations = load_dataset("ajdajd/data-snapshot", name="annotations", split="unhcr")
+>>> annotations[0]  # Inspect the first record
+{'label_map': {'1': 'Figure', '2': 'Table'}, 'info': {'schema_version': '1.3', 'type': 'ground_truth', 'created_at': datetime.datetime(2026, 5, 20, 13, 44, 29), 'run_id': 'human-annotation-combined-e3432dce89', 'model': {'name': 'human annotation'}, 'coordinate_system': {'type': 'normalized_xyxy', 'range': [0.0, 1.0], 'origin': 'top_left'}}, 'documents': [{'doc_id': '06072015-baalbek-hermelgovernorateprofile.pdf', 'doc_name': '06072015-baalbek-hermelgovernorateprofile.pdf', 'doc_path': 'pdf_input/06072015-baalbek-hermelgovernorateprofile.pdf'}], 'predictions': [{'page_id': '06072015-baalbek-hermelgovernorateprofile.pdf::p000', 'doc_id': '06072015-baalbek-hermelgovernorateprofile.pdf', 'page_index': 0, 'objects': [{'id': '1d69f693', 'label': 'Figure', 'bbox': [0.029415499554572243, 0.1766403810171256, 0.5954839424856321, 0.7354445202645015], 'score': None}, ...}
+```
+
+### Metadata
+
+```python
+>>> from datasets import load_dataset
+>>> metadata = load_dataset("ajdajd/data-snapshot", name="metadata", split="unhcr")
+>>> metadata[0]  # Inspect the first record
+{'type': 'document', 'metadata_information': {'title': 'Lebanon: Baalbek-Hermel Governorate Profile (June 2015)', 'idno': '06072015-baalbek-hermelgovernorateprofile', 'producers': [{'name': 'UNHCR', 'abbr': 'UNHCR', 'affiliation': 'UNHCR', 'role': 'Source'}], 'production_date': datetime.datetime(2026, 5, 21, 0, 0), ...}
+```
+
 ## Schema
 
 ### Annotations
