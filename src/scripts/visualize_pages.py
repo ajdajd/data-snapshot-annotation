@@ -126,12 +126,43 @@ def draw_objects(img, objects, color, source):
     return img
 
 
+def _should_render_page(
+    has_gt: bool,
+    has_pred: bool,
+    mode: Literal["gt", "pred", "union", "all"],
+) -> bool:
+    """Determine whether a page should be rendered based on the mode.
+
+    Parameters
+    ----------
+    has_gt : bool
+        Whether the page has ground-truth objects.
+    has_pred : bool
+        Whether the page has prediction objects.
+    mode : {"gt", "pred", "union", "all"}
+        Page filtering mode.
+
+    Returns
+    -------
+    bool
+        True if the page should be rendered.
+    """
+    if mode == "gt":
+        return has_gt
+    if mode == "pred":
+        return has_pred
+    if mode == "union":
+        return has_gt and has_pred
+    return True
+
+
 def visualize_snapshots(
     gt_json_path: str,
     pred_json_path: str,
     input_pdf_dir: str,
     output_dir: str,
     pdf_backend: str = "pymupdf",
+    mode: Literal["gt", "pred", "union", "all"] = "all",
 ):
     """Render visualization PNGs.
 
@@ -150,6 +181,10 @@ def visualize_snapshots(
         Path to save annotated pages
     pdf_backend : {"pymupdf", "pdf2image"}
         Library to use for PDF-to-image rendering.
+    mode : {"gt", "pred", "union", "all"}
+        Page filtering mode. ``"gt"`` renders only pages with ground-truth
+        boxes, ``"pred"`` only pages with prediction boxes, ``"union"`` only
+        pages that have both, and ``"all"`` (default) renders every page.
     """
     gt = load_json(gt_json_path)
     pr = load_json(pred_json_path)
@@ -172,11 +207,19 @@ def visualize_snapshots(
         pr_doc_pages = pr_pages.get(doc_id, {})
         images = convert_pdf_to_opencv_images(str(pdf_path), backend=pdf_backend)
         for page_index, img in enumerate(images):
+            gt_page = gt_doc_pages.get(page_index)
+            pr_page = pr_doc_pages.get(page_index)
+
+            has_gt = bool(gt_page and gt_page["objects"])
+            has_pred = bool(pr_page and pr_page["objects"])
+
+            if not _should_render_page(has_gt, has_pred, mode):
+                continue
+
             canvas = img.copy()
 
             # GT boxes
-            gt_page = gt_doc_pages.get(page_index)
-            if gt_page and gt_page["objects"]:
+            if has_gt:
                 canvas = draw_objects(
                     canvas,
                     gt_page["objects"],
@@ -185,8 +228,7 @@ def visualize_snapshots(
                 )
 
             # Pred boxes
-            pr_page = pr_doc_pages.get(page_index)
-            if pr_page and pr_page["objects"]:
+            if has_pred:
                 canvas = draw_objects(
                     canvas,
                     pr_page["objects"],
@@ -229,6 +271,18 @@ if __name__ == "__main__":
         default="pymupdf",
         help="PDF-to-image rendering backend (default: pymupdf).",
     )
+    ap.add_argument(
+        "--mode",
+        type=str,
+        choices=["gt", "pred", "union", "all"],
+        default="all",
+        help=(
+            "Page filtering mode: 'gt' = only pages with GT boxes, "
+            "'pred' = only pages with prediction boxes, "
+            "'union' = only pages with both, "
+            "'all' = all pages (default)."
+        ),
+    )
     args = ap.parse_args()
 
     visualize_snapshots(
@@ -237,6 +291,7 @@ if __name__ == "__main__":
         input_pdf_dir=args.input_pdf_dir,
         output_dir=args.output_dir,
         pdf_backend=args.pdf_backend,
+        mode=args.mode,
     )
 
     print("Visualization complete.")
