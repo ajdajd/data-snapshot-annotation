@@ -40,7 +40,7 @@ def test_doclayoutyolo():
     ref_path = ROOT / "tests/data/doclayoutyolo_ref.json"
     test_path = ROOT / "tests/data/doclayoutyolo_test.json"
 
-    cfg = DocLayoutYOLOConfig(filter_small=False)
+    cfg = DocLayoutYOLOConfig()
     run_doclayout_yolo_adapter_directory(
         input_pdf_dir=ROOT / "tests/data/pdf_input",
         output_json_path=test_path,
