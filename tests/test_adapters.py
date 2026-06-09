@@ -37,15 +37,14 @@ def test_labelstudio():
 
 @pytest.mark.skip(reason="For debugging purposes only.")
 def test_doclayoutyolo():
-    ref_path = ROOT / "tests/data/doclayout-yolo.json"
-    test_path = ROOT / "tests/data/doclayout-yolo_test.json"
+    ref_path = ROOT / "tests/data/doclayoutyolo_ref.json"
+    test_path = ROOT / "tests/data/doclayoutyolo_test.json"
 
-    cfg = DocLayoutYOLOConfig()
+    cfg = DocLayoutYOLOConfig(filter_small=False)
     run_doclayout_yolo_adapter_directory(
-        input_pdf_dir=ROOT / "pdf_input",
+        input_pdf_dir=ROOT / "tests/data/pdf_input",
         output_json_path=test_path,
         run_id=None,
-        config=cfg,
     )
 
     ref = load_json(ref_path)

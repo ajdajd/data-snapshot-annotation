@@ -1,0 +1,414 @@
+{
+    "label_map": {
+        "1": "Figure",
+        "2": "Table"
+    },
+    "info": {
+        "schema_version": "1.3",
+        "type": "prediction",
+        "created_at": "2026-06-09T09:00:58Z",
+        "run_id": "doclayout-yolo-26726e5eb1",
+        "model": {
+            "name": "juliozhao/DocLayout-YOLO-DocStructBench",
+            "version": "doclayout_yolo_docstructbench_imgsz1024.pt",
+            "notes": "adapter=doclayout_yolo; model_path=/home/ajd/data-snapshot-annotation/models/doclayout_yolo_docstructbench_imgsz1024.pt; device=cpu; dpi=300; conf=0.2; imgsz=1024"
+        },
+        "coordinate_system": {
+            "type": "normalized_xyxy",
+            "range": [
+                0.0,
+                1.0
+            ],
+            "origin": "top_left"
+        }
+    },
+    "documents": [
+        {
+            "doc_id": "1_advocacy_note_mineaction_-_niger_eng.pdf",
+            "doc_name": "1_advocacy_note_mineaction_-_niger_eng.pdf",
+            "doc_path": "tests/data/pdf_input/1_advocacy_note_mineaction_-_niger_eng.pdf"
+        },
+        {
+            "doc_id": "1_note_plaidoyer_lutte_antimines_-_niger_fr.pdf",
+            "doc_name": "1_note_plaidoyer_lutte_antimines_-_niger_fr.pdf",
+            "doc_path": "tests/data/pdf_input/1_note_plaidoyer_lutte_antimines_-_niger_fr.pdf"
+        },
+        {
+            "doc_id": "2_note_danalyse_de_protection_-_retour_de_pdi_a_teguy.pdf",
+            "doc_name": "2_note_danalyse_de_protection_-_retour_de_pdi_a_teguy.pdf",
+            "doc_path": "tests/data/pdf_input/2_note_danalyse_de_protection_-_retour_de_pdi_a_teguy.pdf"
+        }
+    ],
+    "predictions": [
+        {
+            "page_id": "1_advocacy_note_mineaction_-_niger_eng.pdf::p000",
+            "doc_id": "1_advocacy_note_mineaction_-_niger_eng.pdf",
+            "page_index": 0,
+            "objects": [
+                {
+                    "id": "1_advocacy_note_mineaction_-_niger_eng.pdf::p000:4",
+                    "label": "Figure",
+                    "bbox": [
+                        0.0,
+                        0.35206682298719,
+                        1.0,
+                        0.7773200875677024
+                    ],
+                    "score": 0.7149238586425781
+                },
+                {
+                    "id": "1_advocacy_note_mineaction_-_niger_eng.pdf::p000:6",
+                    "label": "Figure",
+                    "bbox": [
+                        0.6733391057190901,
+                        0.028307624390622774,
+                        0.823750641594871,
+                        0.10783804672745778
+                    ],
+                    "score": 0.3826369047164917
+                },
+                {
+                    "id": "1_advocacy_note_mineaction_-_niger_eng.pdf::p000:8",
+                    "label": "Figure",
+                    "bbox": [
+                        0.5212612436549022,
+                        0.028844565866746545,
+                        0.657561284118677,
+                        0.10655856159693024
+                    ],
+                    "score": 0.2969192564487457
+                },
+                {
+                    "id": "1_advocacy_note_mineaction_-_niger_eng.pdf::p000:11",
+                    "label": "Figure",
+                    "bbox": [
+                        0.2012491222352378,
+                        0.025373280524120093,
+                        0.8283441459781842,
+                        0.11560390911733003
+                    ],
+                    "score": 0.279104083776474
+                }
+            ]
+        },
+        {
+            "page_id": "1_advocacy_note_mineaction_-_niger_eng.pdf::p001",
+            "doc_id": "1_advocacy_note_mineaction_-_niger_eng.pdf",
+            "page_index": 1,
+            "objects": [
+                {
+                    "id": "1_advocacy_note_mineaction_-_niger_eng.pdf::p001:4",
+                    "label": "Figure",
+                    "bbox": [
+                        0.460121188611573,
+                        0.6975125494405644,
+                        0.8761203309212515,
+                        0.8415843306816562
+                    ],
+                    "score": 0.9230810403823853
+                }
+            ]
+        },
+        {
+            "page_id": "1_advocacy_note_mineaction_-_niger_eng.pdf::p002",
+            "doc_id": "1_advocacy_note_mineaction_-_niger_eng.pdf",
+            "page_index": 2,
+            "objects": [
+                {
+                    "id": "1_advocacy_note_mineaction_-_niger_eng.pdf::p002:3",
+                    "label": "Figure",
+                    "bbox": [
+                        0.12514590871089026,
+                        0.39115333339643316,
+                        0.6059325778258515,
+                        0.6675680197495011
+                    ],
+                    "score": 0.9474954009056091
+                },
+                {
+                    "id": "1_advocacy_note_mineaction_-_niger_eng.pdf::p002:5",
+                    "label": "Figure",
+                    "bbox": [
+                        0.5077863245037283,
+                        0.08545065415490041,
+                        0.9251180062222893,
+                        0.2552074923890483
+                    ],
+                    "score": 0.9050750136375427
+                }
+            ]
+        },
+        {
+            "page_id": "1_advocacy_note_mineaction_-_niger_eng.pdf::p003",
+            "doc_id": "1_advocacy_note_mineaction_-_niger_eng.pdf",
+            "page_index": 3,
+            "objects": [
+                {
+                    "id": "1_advocacy_note_mineaction_-_niger_eng.pdf::p003:2",
+                    "label": "Figure",
+                    "bbox": [
+                        0.14256482814310636,
+                        0.3124005133912664,
+                        0.6637967596703698,
+                        0.6030612367044969
+                    ],
+                    "score": 0.9415462017059326
+                }
+            ]
+        },
+        {
+            "page_id": "1_advocacy_note_mineaction_-_niger_eng.pdf::p004",
+            "doc_id": "1_advocacy_note_mineaction_-_niger_eng.pdf",
+            "page_index": 4,
+            "objects": [
+                {
+                    "id": "1_advocacy_note_mineaction_-_niger_eng.pdf::p004:5",
+                    "label": "Table",
+                    "bbox": [
+                        0.4209996461387797,
+                        0.08394471432763059,
+                        0.9153041632028416,
+                        0.2339918947817934
+                    ],
+                    "score": 0.5970054268836975
+                },
+                {
+                    "id": "1_advocacy_note_mineaction_-_niger_eng.pdf::p004:10",
+                    "label": "Figure",
+                    "bbox": [
+                        0.4209996461387797,
+                        0.08394471432763059,
+                        0.9153041632028416,
+                        0.2339918947817934
+                    ],
+                    "score": 0.22661501169204712
+                }
+            ]
+        },
+        {
+            "page_id": "1_advocacy_note_mineaction_-_niger_eng.pdf::p006",
+            "doc_id": "1_advocacy_note_mineaction_-_niger_eng.pdf",
+            "page_index": 6,
+            "objects": [
+                {
+                    "id": "1_advocacy_note_mineaction_-_niger_eng.pdf::p006:3",
+                    "label": "Figure",
+                    "bbox": [
+                        0.02849885755275248,
+                        0.1879382247663822,
+                        0.92618244360263,
+                        0.4752187174293579
+                    ],
+                    "score": 0.737047553062439
+                },
+                {
+                    "id": "1_advocacy_note_mineaction_-_niger_eng.pdf::p006:6",
+                    "label": "Figure",
+                    "bbox": [
+                        0.4176419499130895,
+                        0.5630843924823618,
+                        0.5543502198741687,
+                        0.6575410640633909
+                    ],
+                    "score": 0.5185961127281189
+                },
+                {
+                    "id": "1_advocacy_note_mineaction_-_niger_eng.pdf::p006:8",
+                    "label": "Figure",
+                    "bbox": [
+                        0.7539148603606157,
+                        0.5670164971694164,
+                        0.9068476082287888,
+                        0.6470936826316633
+                    ],
+                    "score": 0.4457261860370636
+                },
+                {
+                    "id": "1_advocacy_note_mineaction_-_niger_eng.pdf::p006:12",
+                    "label": "Figure",
+                    "bbox": [
+                        0.05847375847456293,
+                        0.18000358485849308,
+                        0.9356276647836054,
+                        0.6789923812535633
+                    ],
+                    "score": 0.21492736041545868
+                }
+            ]
+        },
+        {
+            "page_id": "1_note_plaidoyer_lutte_antimines_-_niger_fr.pdf::p000",
+            "doc_id": "1_note_plaidoyer_lutte_antimines_-_niger_fr.pdf",
+            "page_index": 0,
+            "objects": [
+                {
+                    "id": "1_note_plaidoyer_lutte_antimines_-_niger_fr.pdf::p000:4",
+                    "label": "Figure",
+                    "bbox": [
+                        0.0,
+                        0.3522203156178734,
+                        1.0,
+                        0.7774771643609251
+                    ],
+                    "score": 0.6351757049560547
+                },
+                {
+                    "id": "1_note_plaidoyer_lutte_antimines_-_niger_fr.pdf::p000:5",
+                    "label": "Figure",
+                    "bbox": [
+                        0.6733389089108475,
+                        0.02833202192421786,
+                        0.8237254993418732,
+                        0.10783878617846708
+                    ],
+                    "score": 0.49036458134651184
+                },
+                {
+                    "id": "1_note_plaidoyer_lutte_antimines_-_niger_fr.pdf::p000:7",
+                    "label": "Figure",
+                    "bbox": [
+                        0.5212314272061417,
+                        0.028886810267936682,
+                        0.6575104091879534,
+                        0.1066635723396745
+                    ],
+                    "score": 0.358902245759964
+                },
+                {
+                    "id": "1_note_plaidoyer_lutte_antimines_-_niger_fr.pdf::p000:11",
+                    "label": "Figure",
+                    "bbox": [
+                        0.2013585968202086,
+                        0.02547550310158811,
+                        0.8283130502758465,
+                        0.11547928987370386
+                    ],
+                    "score": 0.21213670074939728
+                }
+            ]
+        },
+        {
+            "page_id": "1_note_plaidoyer_lutte_antimines_-_niger_fr.pdf::p002",
+            "doc_id": "1_note_plaidoyer_lutte_antimines_-_niger_fr.pdf",
+            "page_index": 2,
+            "objects": [
+                {
+                    "id": "1_note_plaidoyer_lutte_antimines_-_niger_fr.pdf::p002:3",
+                    "label": "Figure",
+                    "bbox": [
+                        0.1142546266665722,
+                        0.5395710683059257,
+                        0.5771289534839782,
+                        0.7958995510262258
+                    ],
+                    "score": 0.952401340007782
+                },
+                {
+                    "id": "1_note_plaidoyer_lutte_antimines_-_niger_fr.pdf::p002:7",
+                    "label": "Figure",
+                    "bbox": [
+                        0.5360649628583485,
+                        0.08293858248668223,
+                        0.8866302846949314,
+                        0.43149527502984253
+                    ],
+                    "score": 0.734085202217102
+                }
+            ]
+        },
+        {
+            "page_id": "1_note_plaidoyer_lutte_antimines_-_niger_fr.pdf::p003",
+            "doc_id": "1_note_plaidoyer_lutte_antimines_-_niger_fr.pdf",
+            "page_index": 3,
+            "objects": [
+                {
+                    "id": "1_note_plaidoyer_lutte_antimines_-_niger_fr.pdf::p003:3",
+                    "label": "Figure",
+                    "bbox": [
+                        0.1488002052906779,
+                        0.41644384542919755,
+                        0.6757672274127116,
+                        0.7093542048977337
+                    ],
+                    "score": 0.9446916580200195
+                }
+            ]
+        },
+        {
+            "page_id": "1_note_plaidoyer_lutte_antimines_-_niger_fr.pdf::p004",
+            "doc_id": "1_note_plaidoyer_lutte_antimines_-_niger_fr.pdf",
+            "page_index": 4,
+            "objects": [
+                {
+                    "id": "1_note_plaidoyer_lutte_antimines_-_niger_fr.pdf::p004:6",
+                    "label": "Table",
+                    "bbox": [
+                        0.3618638862385379,
+                        0.08714241367109553,
+                        0.9078419818747481,
+                        0.2258481381284742
+                    ],
+                    "score": 0.41105663776397705
+                }
+            ]
+        },
+        {
+            "page_id": "1_note_plaidoyer_lutte_antimines_-_niger_fr.pdf::p006",
+            "doc_id": "1_note_plaidoyer_lutte_antimines_-_niger_fr.pdf",
+            "page_index": 6,
+            "objects": [
+                {
+                    "id": "1_note_plaidoyer_lutte_antimines_-_niger_fr.pdf::p006:3",
+                    "label": "Figure",
+                    "bbox": [
+                        0.028946540952449553,
+                        0.23203582937660347,
+                        0.9232290407093914,
+                        0.5263529552429269
+                    ],
+                    "score": 0.5687177181243896
+                },
+                {
+                    "id": "1_note_plaidoyer_lutte_antimines_-_niger_fr.pdf::p006:5",
+                    "label": "Figure",
+                    "bbox": [
+                        0.06178511250936807,
+                        0.22929897330098167,
+                        0.9305089776047965,
+                        0.7185608397323974
+                    ],
+                    "score": 0.4808257818222046
+                },
+                {
+                    "id": "1_note_plaidoyer_lutte_antimines_-_niger_fr.pdf::p006:7",
+                    "label": "Figure",
+                    "bbox": [
+                        0.4264682583730099,
+                        0.6114585467591933,
+                        0.5625161382758969,
+                        0.695197389226411
+                    ],
+                    "score": 0.38815438747406006
+                }
+            ]
+        },
+        {
+            "page_id": "2_note_danalyse_de_protection_-_retour_de_pdi_a_teguy.pdf::p001",
+            "doc_id": "2_note_danalyse_de_protection_-_retour_de_pdi_a_teguy.pdf",
+            "page_index": 1,
+            "objects": [
+                {
+                    "id": "2_note_danalyse_de_protection_-_retour_de_pdi_a_teguy.pdf::p001:0",
+                    "label": "Table",
+                    "bbox": [
+                        0.12606214948451985,
+                        0.5203372342012899,
+                        0.868942931120264,
+                        0.8014158207579105
+                    ],
+                    "score": 0.9681886434555054
+                }
+            ]
+        }
+    ]
+}
