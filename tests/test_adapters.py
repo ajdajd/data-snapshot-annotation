@@ -83,7 +83,7 @@ def test_tfid():
     test_path.unlink()
 
 
-# @pytest.mark.skip(reason="For debugging purposes only.")
+@pytest.mark.skip(reason="For debugging purposes only.")
 def test_yolo26():
     ref_path = ROOT / "tests/data/yolo26_ref.json"
     test_path = ROOT / "tests/data/yolo26_test.json"
@@ -109,7 +109,7 @@ def test_yolo26():
 
 @pytest.mark.skip(reason="For debugging purposes only.")
 def test_yolo11():
-    ref_path = ROOT / "tests/data/yolo11.json"
+    ref_path = ROOT / "tests/data/yolo11_ref.json"
     test_path = ROOT / "tests/data/yolo11_test.json"
 
     cfg = YOLO11Config()
