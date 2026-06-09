@@ -17,6 +17,7 @@ from pathlib import Path
 from typing import Any
 
 from doclayout_yolo import YOLOv10
+from huggingface_hub import hf_hub_download
 
 from tqdm.auto import tqdm
 
@@ -30,7 +31,6 @@ from data_snapshot.utils import (
 
 MODEL_NAME = "juliozhao/DocLayout-YOLO-DocStructBench"
 MODEL_FILENAME = "doclayout_yolo_docstructbench_imgsz1024.pt"
-MODEL_PATH_DEFAULT = MODELS_DIR / MODEL_FILENAME
 OUTPUT_JSON_PATH = ROOT / "data/evaluation_input/doclayoutyolo.json"
 IMGSZ = 1024
 
@@ -76,8 +76,10 @@ class DocLayoutYOLOConfig:
 
     Parameters
     ----------
-    model_path : str | Path
-        Path to the YOLO ``.pt`` weights file, or a HuggingFace repo ID.
+    repo_id : str
+        HuggingFace model repository ID.
+    filename : str
+        Model weight file name on the HF repo.
     device : str
         Torch device string (e.g. ``"cpu"``, ``"cuda:0"``).
     dpi : int
@@ -97,7 +99,8 @@ class DocLayoutYOLOConfig:
 
     def __init__(
         self,
-        model_path: str | Path = MODEL_PATH_DEFAULT,
+        repo_id: str = MODEL_NAME,
+        filename: str = MODEL_FILENAME,
         device: str = "cpu",
         dpi: int = 300,
         conf: float = 0.2,
@@ -106,7 +109,8 @@ class DocLayoutYOLOConfig:
         filter_small: bool = True,
         pdf_backend: str = "pymupdf",
     ) -> None:
-        self.model_path = model_path
+        self.repo_id = repo_id
+        self.filename = filename
         self.device = device
         self.dpi = dpi
         self.conf = conf
@@ -155,8 +159,15 @@ def run_doclayout_yolo_adapter_directory(
     output_json_path.parent.mkdir(parents=True, exist_ok=True)
 
     cfg = config or DocLayoutYOLOConfig()
-    # TODO: Implement caching/hf_hub_download if repo_id is given
-    model = YOLOv10(cfg.model_path)
+
+    MODELS_DIR.mkdir(parents=True, exist_ok=True)
+    model_path = hf_hub_download(
+        repo_id=cfg.repo_id,
+        filename=cfg.filename,
+        repo_type="model",
+        local_dir=str(MODELS_DIR),
+    )
+    model = YOLOv10(model_path)
 
     pdf_files = sorted(input_pdf_dir.rglob("*.pdf"))
     if not pdf_files:
@@ -244,7 +255,6 @@ def run_doclayout_yolo_adapter_directory(
                 }
             )
 
-    model_path_str = str(cfg.model_path)
     out = {
         "label_map": LABEL_MAP,
         "info": {
@@ -253,10 +263,10 @@ def run_doclayout_yolo_adapter_directory(
             "created_at": utc_now_iso(),
             "run_id": run_id,
             "model": {
-                "name": MODEL_NAME,
-                "version": MODEL_FILENAME,
+                "name": cfg.repo_id,
+                "version": cfg.filename,
                 "notes": (
-                    f"adapter=doclayout_yolo; model_path={model_path_str}; "
+                    f"adapter=doclayout_yolo; "
                     f"device={cfg.device}; dpi={cfg.dpi}; "
                     f"conf={cfg.conf}; imgsz={cfg.imgsz}"
                 ),
@@ -307,15 +317,16 @@ if __name__ == "__main__":
         default="relative",
     )
     parser.add_argument(
-        "--model_path",
+        "--repo_id",
         type=str,
-        default=str(MODEL_PATH_DEFAULT),
-        help=(
-            "Path to a local .pt file, or a HuggingFace repo ID "
-            "(e.g. juliozhao/DocLayout-YOLO-DocStructBench). "
-            "When a repo ID is given the model is downloaded and cached via "
-            "huggingface_hub."
-        ),
+        default=MODEL_NAME,
+        help="HuggingFace repo ID for the DocLayout-YOLO model.",
+    )
+    parser.add_argument(
+        "--filename",
+        type=str,
+        default=MODEL_FILENAME,
+        help="Model weight file name on the HF repo.",
     )
     parser.add_argument(
         "--filter_small_predictions",
@@ -338,7 +349,8 @@ if __name__ == "__main__":
     print(f"PDFs found    : {len(pdf_files)}")
 
     cfg = DocLayoutYOLOConfig(
-        model_path=args.model_path,
+        repo_id=args.repo_id,
+        filename=args.filename,
         device=args.device,
         dpi=args.dpi,
         conf=args.conf,
