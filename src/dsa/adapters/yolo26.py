@@ -107,7 +107,7 @@ class YOLO26Config:
         dpi: int = 300,
         conf: float = 0.25,
         iou: float = 0.7,
-        imgsz: int = 1024,
+        imgsz: int = 1280,
         store_doc_path_as: str = "relative",
         filter_small: bool = True,
         pdf_backend: str = "pymupdf",

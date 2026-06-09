@@ -15,6 +15,8 @@ from dsa.adapters.tfid import TFIDConfig, run_tfid_adapter_directory
 from dsa.adapters.yolo26 import YOLO26Config, run_yolo26_adapter_directory
 from dsa.adapters.yolo11 import YOLO11Config, run_yolo11_adapter_directory
 
+INPUT_PDF_DIR = ROOT / "tests/data/pdf_input"
+
 
 @pytest.mark.skip(reason="For debugging purposes only.")
 def test_labelstudio():
@@ -42,7 +44,7 @@ def test_doclayoutyolo():
 
     cfg = DocLayoutYOLOConfig()
     run_doclayout_yolo_adapter_directory(
-        input_pdf_dir=ROOT / "tests/data/pdf_input",
+        input_pdf_dir=INPUT_PDF_DIR,
         output_json_path=test_path,
         run_id=None,
     )
@@ -81,14 +83,14 @@ def test_tfid():
     test_path.unlink()
 
 
-@pytest.mark.skip(reason="For debugging purposes only.")
+# @pytest.mark.skip(reason="For debugging purposes only.")
 def test_yolo26():
-    ref_path = ROOT / "tests/data/yolo26.json"
+    ref_path = ROOT / "tests/data/yolo26_ref.json"
     test_path = ROOT / "tests/data/yolo26_test.json"
 
     cfg = YOLO26Config()
     run_yolo26_adapter_directory(
-        input_pdf_dir=ROOT / "pdf_input",
+        input_pdf_dir=INPUT_PDF_DIR,
         output_json_path=test_path,
         run_id=None,
         config=cfg,
@@ -112,7 +114,7 @@ def test_yolo11():
 
     cfg = YOLO11Config()
     run_yolo11_adapter_directory(
-        input_pdf_dir=ROOT / "pdf_input",
+        input_pdf_dir=INPUT_PDF_DIR,
         output_json_path=test_path,
         run_id=None,
         config=cfg,
