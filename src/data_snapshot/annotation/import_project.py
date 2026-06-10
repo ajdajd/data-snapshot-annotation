@@ -7,7 +7,7 @@ imports all tasks with their existing annotations so work can continue.
 
 Usage::
 
-    python -m data_snapshot.annotation.import_project \\
+    uv run python -m data_snapshot.annotation.import_project \\
         --project_name="My Restored Project" \\
         --input_path=backups/project_22_backup.json \\
         --input_pdf_dir=pdf_input/

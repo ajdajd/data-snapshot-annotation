@@ -6,7 +6,7 @@ to ``data/batch_runs/``.
 
 Usage::
 
-    python -m data_snapshot.inference.batch_runner \\
+    uv run python -m data_snapshot.inference.batch_runner \\
         --source unhcr --batch_start 1 --batch_end 5
 """
 

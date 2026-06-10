@@ -6,7 +6,7 @@ project and saves them to a local JSON file for backup or migration.
 
 Usage::
 
-    python -m data_snapshot.annotation.export_project \\
+    uv run python -m data_snapshot.annotation.export_project \\
         --project_id=22 \\
         --output_path=data/backups/project_22_backup.json
 """

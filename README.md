@@ -21,19 +21,21 @@ src/data_snapshot/
 
 ## Installation
 
+This project uses [uv](https://docs.astral.sh/uv/) for dependency management.
+
 ```shell
 # Core package
-pip install -e .
+uv sync
 
 # With model-specific dependencies
-pip install -e .[tfid]             # TF-ID adapter
-pip install -e .[doclayout_yolo]   # DocLayout-YOLO adapter
-pip install -e .[yolo11]           # YOLO11 adapter
-pip install -e .[yolo26]           # YOLO26 adapter
-pip install -e .[viz]              # Visualization
+uv sync --extra tfid             # TF-ID adapter
+uv sync --extra doclayout_yolo   # DocLayout-YOLO adapter
+uv sync --extra yolo11           # YOLO11 adapter
+uv sync --extra yolo26           # YOLO26 adapter
+uv sync --extra viz              # Visualization
 
 # All dependencies (development)
-pip install -e .[dev]
+uv sync --all-extras
 ```
 
 ### Environment variables
@@ -90,7 +92,7 @@ Annotation workflows for creating ground truth datasets on Label Studio.
     ```
 3. Run `create_tasks.py`.
     ```shell
-    python -m data_snapshot.annotation.create_tasks \
+    uv run python -m data_snapshot.annotation.create_tasks \
     --project_name="My annotation project" \
     --dataset_name=my_dataset \
     --input_pdf_dir=pdf_input/
@@ -102,13 +104,13 @@ Annotation workflows for creating ground truth datasets on Label Studio.
 1. Add PDF files to annotate in the `pdf_input` directory.
 2. Generate prediction file(s). See [Inference](#inference) for the list of supported models and installation info.
     ```shell
-    python -m data_snapshot.inference.{adapter} \
+    uv run python -m data_snapshot.inference.{adapter} \
     --input_pdf_dir=pdf_input/ \
     --output_json_path=data/evaluation_input/preds.json
     ```
 3. (Optional) Combine prediction files by assigning a class to a source.
     ```shell
-    python -m data_snapshot.annotation.merge_class_preds \
+    uv run python -m data_snapshot.annotation.merge_class_preds \
     --figure_preds=data/evaluation_input/preds1.json \
     --table_preds=data/evaluation_input/preds2.json \
     --output_json_path=data/evaluation_input/combined_preds.json  
@@ -119,7 +121,7 @@ Annotation workflows for creating ground truth datasets on Label Studio.
     ```
 5. Create project and tasks.
     ```shell
-    python -m data_snapshot.annotation.create_tasks_with_prelabeling \
+    uv run python -m data_snapshot.annotation.create_tasks_with_prelabeling \
     --project_name="My project with prelabeling" \
     --dataset_name=my_dataset \
     --input_pdf_dir=pdf_input/ \
@@ -136,7 +138,7 @@ Annotation workflows for creating ground truth datasets on Label Studio.
 2. Before exporting, make sure all annotations are submitted and that there are no drafts. You check this by going to the project page and filter for tasks where drafts exist.
 3. Run `export_project.py`. This will create the backup JSON file in the specified path.
     ```shell
-    python -m data_snapshot.annotation.export_project \
+    uv run python -m data_snapshot.annotation.export_project \
     --project_id=22 \
     --output_path=data/backups/project_22_backup.json
     ```
@@ -152,7 +154,7 @@ Annotation workflows for creating ground truth datasets on Label Studio.
     ```
 3. Run `import_project.py`.
     ```shell
-    python -m data_snapshot.annotation.import_project \
+    uv run python -m data_snapshot.annotation.import_project \
     --project_name="My restored project" \
     --input_path=backups/project_22_backup.json \
     --input_pdf_dir=pdf_input/
@@ -175,10 +177,10 @@ For unsupported models, a small adapter module must be written for them for inte
 
 | Model | Optional Dependency | Adapter Module |
 |---|---|---|
-| [yifeihu/TF-ID-large](https://huggingface.co/yifeihu/TF-ID-large) | `pip install -e .[tfid]` | `data_snapshot.inference.tfid` |
-| [juliozhao/DocLayout-YOLO-DocStructBench](https://huggingface.co/juliozhao/DocLayout-YOLO-DocStructBench) | `pip install -e .[doclayout_yolo]` | `data_snapshot.inference.doclayoutyolo` |
-| [Armaggheddon/yolo11-document-layout](https://huggingface.co/Armaggheddon/yolo11-document-layout) | `pip install -e .[yolo11]` | `data_snapshot.inference.yolo11` |
-| [Armaggheddon/yolo26-document-layout](https://huggingface.co/Armaggheddon/yolo26-document-layout) | `pip install -e .[yolo26]` | `data_snapshot.inference.yolo26` |
+| [yifeihu/TF-ID-large](https://huggingface.co/yifeihu/TF-ID-large) | `uv sync --extra tfid` | `data_snapshot.inference.tfid` |
+| [juliozhao/DocLayout-YOLO-DocStructBench](https://huggingface.co/juliozhao/DocLayout-YOLO-DocStructBench) | `uv sync --extra doclayout_yolo` | `data_snapshot.inference.doclayoutyolo` |
+| [Armaggheddon/yolo11-document-layout](https://huggingface.co/Armaggheddon/yolo11-document-layout) | `uv sync --extra yolo11` | `data_snapshot.inference.yolo11` |
+| [Armaggheddon/yolo26-document-layout](https://huggingface.co/Armaggheddon/yolo26-document-layout) | `uv sync --extra yolo26` | `data_snapshot.inference.yolo26` |
 
 ## Generating prediction files
 
@@ -186,8 +188,8 @@ These prediction files will be used in evaluation.
 
 ```shell
 # Example: DocLayout-YOLO
-pip install -e .[doclayout_yolo]
-python -m data_snapshot.inference.doclayoutyolo \
+uv sync --extra doclayout_yolo
+uv run python -m data_snapshot.inference.doclayoutyolo \
     --input_pdf_dir=pdf_input/ \
     --output_json_path=data/evaluation_input/doclayoutyolo.json
 ```
@@ -199,7 +201,7 @@ All adapters follow the same CLI pattern with `--input_pdf_dir` and `--output_js
 Run all adapters across multiple batch directories:
 
 ```shell
-python -m data_snapshot.inference.batch_runner \
+uv run python -m data_snapshot.inference.batch_runner \
     --source unhcr --batch_start 1 --batch_end 5
 ```
 
@@ -217,7 +219,7 @@ See [docs/evaluation_spec.md](docs/evaluation_spec.md) for the full evaluation s
     1. Export annotations by following the [backup procedure](#backing-up-an-annotation-project).
     2. Run the Label Studio adapter:
         ```shell
-        python -m data_snapshot.annotation.labelstudio_adapter \
+        uv run python -m data_snapshot.annotation.labelstudio_adapter \
         --input_json_path=path/to/exported_json \
         --output_json_path=data/evaluation_input/ground_truth.json
         ```
@@ -225,7 +227,7 @@ See [docs/evaluation_spec.md](docs/evaluation_spec.md) for the full evaluation s
 ## Running an evaluation
 
 ```shell
-python -m data_snapshot.evaluation.evaluate_model \
+uv run python -m data_snapshot.evaluation.evaluate_model \
     --gt_json_path=path/to/ground_truth.json \
     --pred_json_path=path/to/preds.json \
     --output_report_path=data/evaluation_output/report.json
@@ -238,8 +240,8 @@ Both ground truth and prediction files must conform to the [Unified Evaluation S
 To render annotated page images comparing ground truth and predictions:
 
 ```shell
-pip install -e .[viz]
-python -m data_snapshot.evaluation.visualize_pages \
+uv sync --extra viz
+uv run python -m data_snapshot.evaluation.visualize_pages \
     --gt_json_path=path/to/gt.json \
     --pred_json_path=path/to/pred.json \
     --input_pdf_dir=pdf_input \
@@ -251,7 +253,7 @@ python -m data_snapshot.evaluation.visualize_pages \
 Combine multiple per-batch prediction JSON files (e.g. from `batch_runner`) into a single file:
 
 ```shell
-python -m data_snapshot.evaluation.merge_batch_preds \
+uv run python -m data_snapshot.evaluation.merge_batch_preds \
     --input_dir=data/batch_runs/ \
     --output_json=data/evaluation_input/combined.json
 ```
@@ -261,7 +263,7 @@ python -m data_snapshot.evaluation.merge_batch_preds \
 Remove predictions whose bounding-box area falls below a threshold:
 
 ```shell
-python -m data_snapshot.evaluation.filter_small_preds \
+uv run python -m data_snapshot.evaluation.filter_small_preds \
     --input_json=data/evaluation_input/preds.json \
     --output_json=data/evaluation_input/preds_filtered.json
 ```
@@ -277,7 +279,7 @@ Tools for converting and enforcing metadata schemas for HuggingFace dataset uplo
 Convert UNHCR/ReliefWeb scraped metadata JSON files to the Document Metadata Schema:
 
 ```shell
-python -m data_snapshot.metadata.unhcr_to_schema \
+uv run python -m data_snapshot.metadata.unhcr_to_schema \
     --input_dir=data/hf_metadata/unhcr/ \
     --output_dir=data/hf_metadata_converted/unhcr/
 ```
@@ -287,7 +289,7 @@ python -m data_snapshot.metadata.unhcr_to_schema \
 Unify metadata schemas across dataset subsets for HuggingFace compatibility:
 
 ```shell
-python -m data_snapshot.metadata.enforce_metadata_schema \
+uv run python -m data_snapshot.metadata.enforce_metadata_schema \
     --input_dir data/hf_metadata/unhcr/ \
     --input_dir data/hf_metadata/prwp/ \
     --output_dir data/hf_metadata_fixed/
@@ -302,7 +304,7 @@ python -m data_snapshot.metadata.enforce_metadata_schema \
 Crop annotated bounding boxes from PDF pages into individual PNG files:
 
 ```shell
-python -m data_snapshot.misc.extract_snapshots \
+uv run python -m data_snapshot.misc.extract_snapshots \
     --input_json=data/evaluation_input/ground_truth.json \
     --input_pdf_dir=pdf_input/ \
     --output_dir=data/snapshots/
@@ -313,7 +315,7 @@ python -m data_snapshot.misc.extract_snapshots \
 Split a combined evaluation JSON file into per-document files for HuggingFace dataset upload:
 
 ```shell
-python -m data_snapshot.misc.annotations_to_hf_dataset \
+uv run python -m data_snapshot.misc.annotations_to_hf_dataset \
     --input_json=data/evaluation_input/ground_truth.json \
     --output_dir=data/hf_annotations/
 ```

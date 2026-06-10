@@ -15,7 +15,7 @@ Usage
 -----
 .. code-block:: bash
 
-    python -m data_snapshot.metadata.unhcr_to_schema \
+    uv run python -m data_snapshot.metadata.unhcr_to_schema \
         --input_dir path/to/metadata_dir/ \
         --output_dir path/to/output_dir/
 """
