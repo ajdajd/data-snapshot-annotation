@@ -29,7 +29,7 @@ To ensure consistency and maintainability across the codebase, all contributors 
 ## 4. Code Structure
 
 - **Naming**: Follow PEP 8 (snake_case for functions/variables, PascalCase for classes).
-- **Constants**: Define project-wide constants in `src/dsa/constants.py`.
+- **Constants**: Define project-wide constants in `src/data_snapshot/constants.py`.
 
 ## 5. Development Environment
 
